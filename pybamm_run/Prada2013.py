@@ -16,30 +16,45 @@ parameter_values["Positive electrode active material volume fraction"] = 0.5846
 parameter_values["Positive particle radius [m]"] = 5.00e-8
 
 
+
+# # check whether the curve is correct
+# x = np.linspace(0.001, 0.999, 1000)
+# OCP_func = parameter_values['Positive electrode OCP [V]']
+# ocv = []
+# for i in range(0, len(x)):
+#     ocv.append(OCP_func(x[i]).value)
+# plt.plot(x, ocv)
+# plt.show()
+# exit()
+
+
 model = pybamm.lithium_ion.DFN()
 experiment = pybamm.Experiment(
-    ["Discharge at 1C for 1 hours or until 2.5 V"] # or until 2.5 V
+    ["Discharge at 1C for 1 hours"] # or until 2.0 V
 )
 
 sim = pybamm.Simulation(model, parameter_values=parameter_values, experiment=experiment)
-sim.solve(initial_soc=1.0)
+SoC_init = 1.0
+sim.solve(initial_soc=SoC_init)
 
 
 # plot the results
 solution = sim.solution
-t = solution["Time [s]"]
-A = solution['Current [A]']
-V = solution["Terminal voltage [V]"]
+t = solution["Time [s]"].entries
+A = solution['Current [A]'].entries
+V = solution["Terminal voltage [V]"].entries
+SoC = SoC_init-solution['Discharge capacity [A.h]'].entries/parameter_values["Nominal cell capacity [A.h]"]
+
 
 import matplotlib as mpl  
-from matplotlib.ticker import FormatStrFormatter
 mpl.rc('font',family='Arial')
 plt.figure(figsize=(5.5,4))
-plt.plot(t.entries,V.entries,'b-',label="Prada2013")
-plt.xlabel("Time [s]")
+plt.plot(SoC, V,'b-',label="Prada2013")
+plt.xlabel("SoC")
 plt.ylabel("Terminal voltage [V]")
-plt.xlim([0,t.entries.max()])
-print(t.entries.max())
+plt.xlim([0,1.0])
+print(t.max())
+print(V.max())
 plt.xticks(fontsize=10)
 plt.yticks(fontsize=10)
 plt.legend()

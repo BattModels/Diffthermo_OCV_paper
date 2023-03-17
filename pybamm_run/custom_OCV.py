@@ -9,6 +9,11 @@ def LFP_OCP(sto):
     RK fit for LFP
     sto: stochiometry 
     """
+
+    x_min_Nat_Mater_paper = 0.05948799345743927 # should be matched to 0.0
+    x_max_Nat_Mater_paper = 0.9934071137200987 # should be matched to 1.0
+    sto = (x_max_Nat_Mater_paper-x_min_Nat_Mater_paper)*sto + x_min_Nat_Mater_paper # streching the soc because Nat Mater paper has a nominal capacity of LFP of 160
+
     _eps = 1e-7
     # rk params
     G0 = -336668.3750 # G0 is the pure substance gibbs free energy 
@@ -32,11 +37,12 @@ def LFP_OCP(sto):
 
 
 # # check whether the curve is correct
-# x = np.linspace(0.05, 0.999, 100000)
+# x = np.linspace(0.001, 0.999, 100)
 # ocv = []
 # for i in range(0, len(x)):
 #     ocv.append(LFP_OCP(x[i]).value)
 # plt.plot(x, ocv)
+# # plt.xlim([0.05, 1.0])
 # plt.show()
 # exit()
 
@@ -53,50 +59,56 @@ parameter_values["Positive particle radius [m]"] = 5.00e-8
 
 # customize parameter values
 parameter_values["Positive electrode OCP [V]"] = LFP_OCP
-del parameter_values["Current function [A]"]
+# del parameter_values["Current function [A]"]
+parameter_values['Nominal cell capacity [A.h]'] = parameter_values['Nominal cell capacity [A.h]'] / 169.97 * 160.0 # this is also because of the data from Nat Mater paper
+parameter_values["Typical current [A]"] = parameter_values["Typical current [A]"] / 169.97 * 160.0
 
 model = pybamm.lithium_ion.DFN()
 
-c_rate = 2.0
-experiment_text = "Discharge at %.4fC for 10000 hours or until 2.5 V" %(c_rate)
-experiment = pybamm.Experiment([experiment_text])
-sim = pybamm.Simulation(model, parameter_values=parameter_values, experiment=experiment)
-solver = pybamm.CasadiSolver() # root_method=pybamm.AlgebraicSolver(method='lm'), mode="fast with events",  extra_options_setup={"max_num_steps": 10000}
-sim.solve(initial_soc=1.0, solver=solver) 
+# c_rate = 2.0
+# time = 1/c_rate
+# experiment_text = "Discharge at %.4fC for %.4f hours" %(c_rate, time) #  or until 2.0 V
+# experiment = pybamm.Experiment([experiment_text])
+# sim = pybamm.Simulation(model, parameter_values=parameter_values, experiment=experiment)
+# solver = pybamm.CasadiSolver(dt_max=0.0001) # root_method=pybamm.AlgebraicSolver(method='lm'), mode="fast with events",  extra_options_setup={"max_num_steps": 10000}
+# SoC_init = 1.0
+# sim.solve(initial_soc=SoC_init, solver=solver) 
 
 
 # # try solving up to the time the solver failed
-# param = model.default_parameter_values
-# timescale = param.evaluate(model.timescale)
-# t_end = 0.01*timescale # 0.015
-# t_eval = np.linspace(0, t_end, 100)
-# sim = pybamm.Simulation(model, parameter_values=parameter_values)
-# # solver = pybamm.ScikitsDaeSolver() 
-# solver = pybamm.CasadiSolver(root_method='casadi', dt_max=600, return_solution_if_failed_early=True) # root_method=pybamm.AlgebraicSolver(method='lm')
-# sim.solve(t_eval = t_eval, initial_soc=1.0, solver=solver) # , solver=pybamm.CasadiSolver(mode="safe", dt_max=0.01)
+c_rate = 2.0
+parameter_values["Current function [A]"] = 1.1*c_rate/169.97*160.0 # setting c rate, / 169.97 * 160.0 is because of the data from Nat Mater paper
+param = model.default_parameter_values
+timescale = param.evaluate(model.timescale)
+t_end = 3600.0/c_rate*timescale # 0.015
+t_eval = np.linspace(0.0, t_end, 100000000)
+sim = pybamm.Simulation(model, parameter_values=parameter_values)
+SoC_init = 1.0
+sim.solve(t_eval = t_eval, initial_soc=SoC_init)
 
 
 # plot the results
 solution = sim.solution
-t = solution["Time [s]"]
-A = solution['Current [A]']
-V = solution["Terminal voltage [V]"]
+t = solution["Time [s]"].entries
+A = solution['Current [A]'].entries
+V = solution["Terminal voltage [V]"].entries
+SoC = SoC_init-solution['Discharge capacity [A.h]'].entries/parameter_values["Nominal cell capacity [A.h]"]
 
-import matplotlib as mpl  
-from matplotlib.ticker import FormatStrFormatter
-mpl.rc('font',family='Arial')
-plt.figure(figsize=(5.5,4))
-plt.plot(t.entries,V.entries,'b-',label="Diffthermo")
-plt.xlabel("Time [s]")
-plt.ylabel("Terminal voltage [V]")
-plt.xlim([0,t.entries.max()])
-print(t.entries.max())
-plt.xticks(fontsize=10)
-plt.yticks(fontsize=10)
-plt.legend()
-plt.savefig('diffthermo.png', dpi=200, bbox_inches='tight') 
-plt.close()
+# import matplotlib as mpl  
+# mpl.rc('font',family='Arial')
+# plt.figure(figsize=(5.5,4))
+# plt.plot(SoC, V,'b-',label="Diffthermo")
+# plt.xlabel("SoC")
+# plt.ylabel("Terminal voltage [V]")
+# plt.xlim([0,1])
+print(t.max())
+# plt.xticks(fontsize=10)
+# plt.yticks(fontsize=10)
+# plt.legend()
+# plt.show()
+# plt.savefig('diffthermo.png', dpi=200, bbox_inches='tight') 
+# plt.close()
 
 # save solution
 npz_name = "custom_LFP_c_rate_%.4f.npz" %(c_rate)
-np.savez(npz_name, t=t.entries, V=V.entries)
+np.savez(npz_name, t=t, SoC=SoC, V=V)
