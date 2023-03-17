@@ -128,26 +128,49 @@ plt.close()
 
 # calculate RMSE and R2-score of these fits
 from sklearn.metrics import r2_score, mean_squared_error
+
+def AIC(k, x_pred, x_real):
+    """
+    k: number of parameters
+    x_pred: predicted result
+    x_real: true result
+    """
+    n = len(x_pred)
+    RSS = np.sum((x_pred-x_real)**2)
+    aic = 2*k + n * np.log(RSS/n)
+    return aic
+
+
+
 # diffthermo
 r2 = r2_score(OCV_true, OCV_diffthermo)
 rmse = mean_squared_error(OCV_true, OCV_diffthermo, squared=False) # squared=False returns RMSE value
-print("Diffthermo: R2 = %.4f, RMSE = %.4f" %(r2, rmse))
-# diffthermo with splines
-r2 = r2_score(OCV_true, OCV_diffthermo_splines)
-rmse = mean_squared_error(OCV_true, OCV_diffthermo_splines, squared=False) # squared=False returns RMSE value
-print("Diffthermo w/ splines: R2 = %.4f, RMSE = %.4f" %(r2, rmse))
+k = 5
+aic_base = AIC(k, OCV_diffthermo, OCV_true)
+aic_relative = AIC(k, OCV_diffthermo, OCV_true) - aic_base
+print("Diffthermo: R2 = %.4f, RMSE = %.4f, relative AIC = %.4f" %(r2, rmse, aic_relative))
+# # diffthermo with splines
+# r2 = r2_score(OCV_true, OCV_diffthermo_splines)
+# rmse = mean_squared_error(OCV_true, OCV_diffthermo_splines, squared=False) # squared=False returns RMSE value
+# print("Diffthermo w/ splines: R2 = %.4f, RMSE = %.4f" %(r2, rmse))
 # OCV.jl 
 r2 = r2_score(OCV_true, OCV_julia)
 rmse = mean_squared_error(OCV_true, OCV_julia, squared=False)
-print("OCV_julia: R2 = %.4f, RMSE = %.4f" %(r2, rmse))
+k = 53
+aic_relative = AIC(k, OCV_julia, OCV_true) - aic_base
+print("OCV_julia: R2 = %.4f, RMSE = %.4f, relative AIC = %.4f" %(r2, rmse, aic_relative))
 # regular RK
 r2 = r2_score(OCV_true, OCV_RK)
 rmse = mean_squared_error(OCV_true, OCV_RK, squared=False)
-print("Regular RK: R2 = %.4f, RMSE = %.4f" %(r2, rmse))
+k = 32
+aic_relative = AIC(k, OCV_RK, OCV_true) - aic_base
+print("Regular RK: R2 = %.4f, RMSE = %.4f, relative AIC = %.4f" %(r2, rmse, aic_relative))
 # Plett skewed RK
 r2 = r2_score(OCV_true, OCV_Plett)
 rmse = mean_squared_error(OCV_true, OCV_Plett, squared=False)
-print("Plett: R2 = %.4f, RMSE = %.4f" %(r2, rmse))
+k = 17
+aic_relative = AIC(k, OCV_Plett, OCV_true) - aic_base
+print("Plett: R2 = %.4f, RMSE = %.4f, relative AIC = %.4f" %(r2, rmse, aic_relative))
 
 
 # # draw better figs
