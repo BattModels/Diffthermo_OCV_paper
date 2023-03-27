@@ -65,26 +65,26 @@ parameter_values["Typical current [A]"] = parameter_values["Typical current [A]"
 
 model = pybamm.lithium_ion.DFN()
 
-# c_rate = 2.0
-# time = 1/c_rate
-# experiment_text = "Discharge at %.4fC for %.4f hours" %(c_rate, time) #  or until 2.0 V
-# experiment = pybamm.Experiment([experiment_text])
-# sim = pybamm.Simulation(model, parameter_values=parameter_values, experiment=experiment)
-# solver = pybamm.CasadiSolver(dt_max=0.0001) # root_method=pybamm.AlgebraicSolver(method='lm'), mode="fast with events",  extra_options_setup={"max_num_steps": 10000}
-# SoC_init = 1.0
-# sim.solve(initial_soc=SoC_init, solver=solver) 
-
-
-# # try solving up to the time the solver failed
 c_rate = 2.0
-parameter_values["Current function [A]"] = 1.1*c_rate/169.97*160.0 # setting c rate, / 169.97 * 160.0 is because of the data from Nat Mater paper
-param = model.default_parameter_values
-timescale = param.evaluate(model.timescale)
-t_end = 3600.0/c_rate*timescale # 0.015
-t_eval = np.linspace(0.0, t_end, 100000000)
-sim = pybamm.Simulation(model, parameter_values=parameter_values)
+time = 1/c_rate
+experiment_text = "Discharge at %.4fC for %.4f hours" %(c_rate, time) #  or until 2.0 V
+experiment = pybamm.Experiment([experiment_text])
+sim = pybamm.Simulation(model, parameter_values=parameter_values, experiment=experiment)
+solver = pybamm.CasadiSolver() 
 SoC_init = 1.0
-sim.solve(t_eval = t_eval, initial_soc=SoC_init)
+sim.solve(initial_soc=SoC_init, solver=solver) 
+
+
+# ## smaller time steps for finer resolution of simulation
+# c_rate = 2.0
+# parameter_values["Current function [A]"] = 1.1*c_rate/169.97*160.0 # setting c rate, / 169.97 * 160.0 is because of the data from Nat Mater paper
+# param = model.default_parameter_values
+# timescale = param.evaluate(model.timescale)
+# t_end = 3600.0/c_rate*timescale # 0.015
+# t_eval = np.linspace(0.0, t_end, 100000000)
+# sim = pybamm.Simulation(model, parameter_values=parameter_values)
+# SoC_init = 1.0
+# sim.solve(t_eval = t_eval, initial_soc=SoC_init)
 
 
 # plot the results
