@@ -137,6 +137,7 @@ from sklearn.metrics import r2_score, mean_squared_error
 
 def AIC(k, x_pred, x_real):
     """
+    Akaike information criterion
     k: number of parameters
     x_pred: predicted result
     x_real: true result
