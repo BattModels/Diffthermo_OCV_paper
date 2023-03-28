@@ -56,6 +56,9 @@ SOC_diffthermo_splines = data['x']
 OCV_diffthermo_splines = data['y']
 os.chdir("../")
 
+
+
+
 import matplotlib as mpl  
 from matplotlib.ticker import FormatStrFormatter
 mpl.rc('font',family='Arial')
@@ -126,7 +129,10 @@ plt.savefig('Outside_fitted_region.png', dpi=200, bbox_inches='tight')
 plt.close()
 
 
-# calculate RMSE and R2-score of these fits
+
+
+
+# calculate RMSE, R2-score and AIC of these fits
 from sklearn.metrics import r2_score, mean_squared_error
 
 def AIC(k, x_pred, x_real):
@@ -136,8 +142,9 @@ def AIC(k, x_pred, x_real):
     x_real: true result
     """
     n = len(x_pred)
-    RSS = np.sum((x_pred-x_real)**2)
-    aic = 2*k + n * np.log(RSS/n)
+    SSE = np.sum((x_pred-x_real)**2)
+    sigma2_MLE = SSE/n
+    aic = 2*k  + n*(np.log(2*np.pi) + np.log(sigma2_MLE)) + 1/sigma2_MLE*SSE
     return aic
 
 
