@@ -15,8 +15,6 @@ parameter_values["Positive electrode porosity"] = 0.26
 parameter_values["Positive electrode active material volume fraction"] = 0.5846
 parameter_values["Positive particle radius [m]"] = 5.00e-8
 
-
-
 # # check whether the curve is correct
 # x = np.linspace(0.001, 0.999, 1000)
 # OCP_func = parameter_values['Positive electrode OCP [V]']
@@ -27,15 +25,26 @@ parameter_values["Positive particle radius [m]"] = 5.00e-8
 # plt.show()
 # exit()
 
-
 model = pybamm.lithium_ion.DFN()
-experiment = pybamm.Experiment(
-    ["Discharge at 1C for 1 hours"] # or until 2.0 V
-)
 
-sim = pybamm.Simulation(model, parameter_values=parameter_values, experiment=experiment)
+# c_rate = 0.5
+# time = 1/c_rate
+# experiment_text = "Discharge at %.4fC for %.4f hours" %(c_rate, time) #  or until 2.0 V
+# experiment = pybamm.Experiment([experiment_text])
+# sim = pybamm.Simulation(model, parameter_values=parameter_values, experiment=experiment)
+# SoC_init = 1.0
+# sim.solve(initial_soc=SoC_init)
+
+## smaller time steps for finer resolution of simulation
+c_rate = 0.5
+parameter_values["Current function [A]"] = 1.1*c_rate
+param = model.default_parameter_values
+timescale = param.evaluate(model.timescale)
+t_end = 3600.0/c_rate*timescale # 0.015
+t_eval = np.linspace(0.0, t_end, 100000000)
+sim = pybamm.Simulation(model, parameter_values=parameter_values)
 SoC_init = 1.0
-sim.solve(initial_soc=SoC_init)
+sim.solve(t_eval = t_eval, initial_soc=SoC_init)
 
 
 # plot the results
@@ -45,18 +54,37 @@ A = solution['Current [A]'].entries
 V = solution["Terminal voltage [V]"].entries
 SoC = SoC_init-solution['Discharge capacity [A.h]'].entries/parameter_values["Nominal cell capacity [A.h]"]
 
-
-import matplotlib as mpl  
-mpl.rc('font',family='Arial')
-plt.figure(figsize=(5.5,4))
-plt.plot(SoC, V,'b-',label="Prada2013")
-plt.xlabel("SoC")
-plt.ylabel("Terminal voltage [V]")
-plt.xlim([0,1.0])
+# import matplotlib as mpl  
+# mpl.rc('font',family='Arial')
+# plt.figure(figsize=(5.5,4))
+# plt.plot(SoC, V,'b-',label="Diffthermo")
+# plt.xlabel("SoC")
+# plt.ylabel("Terminal voltage [V]")
+# plt.xlim([0,1])
 print(t.max())
-print(V.max())
-plt.xticks(fontsize=10)
-plt.yticks(fontsize=10)
-plt.legend()
-plt.savefig('prada.png', dpi=200, bbox_inches='tight') 
-plt.close()
+# plt.xticks(fontsize=10)
+# plt.yticks(fontsize=10)
+# plt.legend()
+# plt.show()
+# plt.savefig('diffthermo.png', dpi=200, bbox_inches='tight') 
+# plt.close()
+
+# save solution
+npz_name = "Prada2013_LFP_c_rate_%.4f.npz" %(c_rate)
+np.savez(npz_name, t=t, SoC=SoC, V=V)
+
+
+# import matplotlib as mpl  
+# mpl.rc('font',family='Arial')
+# plt.figure(figsize=(5.5,4))
+# plt.plot(SoC, V,'b-',label="Prada2013")
+# plt.xlabel("SoC")
+# plt.ylabel("Terminal voltage [V]")
+# plt.xlim([0,1.0])
+# print(t.max())
+# print(V.max())
+# plt.xticks(fontsize=10)
+# plt.yticks(fontsize=10)
+# plt.legend()
+# plt.savefig('prada.png', dpi=200, bbox_inches='tight') 
+# plt.close()
