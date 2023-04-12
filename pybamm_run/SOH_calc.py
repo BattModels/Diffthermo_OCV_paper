@@ -37,6 +37,29 @@ def LFP_OCP(sto):
     mu_e = is_outside_miscibility_gap * mu_outside + (1-is_outside_miscibility_gap) * mu_coex
     return -mu_e/96485.0
 
+# parameter_values = pybamm.ParameterValues("Prada2013")
+# # see these modifications at https://github.com/pybamm-team/PyBaMM/commit/eabb72040892b964907e01cdc09130a7e25a1489
+# parameter_values["Current function [A]"] = 1.1  # 1.1 originally
+# parameter_values["Typical current [A]"] = 1.1
+# parameter_values["Initial concentration in negative electrode [mol.m-3]"] = 13584.0
+# parameter_values["Initial concentration in positive electrode [mol.m-3]"] = 35.0
+# parameter_values["Positive electrode porosity"] = 0.26
+# parameter_values["Positive electrode active material volume fraction"] = 0.5846
+# parameter_values["Positive particle radius [m]"] = 5.00e-8
+# # customize parameter values
+# parameter_values["Positive electrode OCP [V]"] = LFP_OCP
+# # solve init model
+# model = pybamm.lithium_ion.DFN()
+# c_rate = 0.5
+# time = 1/c_rate
+# experiment_text = "Discharge at %.4fC for %.4f hours" %(c_rate, time) #  or until 2.0 V
+# experiment = pybamm.Experiment([experiment_text])
+# sim = pybamm.Simulation(model, parameter_values=parameter_values, experiment=experiment)
+# sim = pybamm.Simulation(model, experiment=experiment, parameter_values=parameter_values)
+# model_sol = sim.solve()
+
+
+# import LFP dataset Prada2013
 parameter_values = pybamm.ParameterValues("Prada2013")
 # see these modifications at https://github.com/pybamm-team/PyBaMM/commit/eabb72040892b964907e01cdc09130a7e25a1489
 parameter_values["Current function [A]"] = 1.1  # 1.1 originally
@@ -49,15 +72,27 @@ parameter_values["Positive particle radius [m]"] = 5.00e-8
 # customize parameter values
 parameter_values["Positive electrode OCP [V]"] = LFP_OCP
 
+# # import LFP dataset from AboutEnergy
+# parameter_values = pybamm.ParameterValues.create_from_bpx("lfp_18650_cell_BPX.json")
+# # customize parameter values
+# parameter_values["Positive electrode OCP [V]"] = LFP_OCP
 
-model = pybamm.lithium_ion.DFN()
-c_rate = 0.5
-time = 1/c_rate
-experiment_text = "Discharge at %.4fC for %.4f hours" %(c_rate, time) #  or until 2.0 V
-experiment = pybamm.Experiment([experiment_text])
-sim = pybamm.Simulation(model, parameter_values=parameter_values, experiment=experiment)
-sim = pybamm.Simulation(model, experiment=experiment, parameter_values=parameter_values)
-model_sol = sim.solve()
+# # test
+# parameter_values = pybamm.ParameterValues("Mohtat2020")
 
-
-
+# Solve for "x_100", "y_100", "Q", "x_0", "y_0". Detailed description can be found at https://github.com/pybamm-team/PyBaMM/blob/develop/examples/notebooks/models/electrode-state-of-health.ipynb
+param = pybamm.LithiumIonParameters()
+Vmin = 2.0
+Vmax = 4.2
+Q_n = parameter_values.evaluate(param.n.Q_init) # TODO what is this
+Q_p = parameter_values.evaluate(param.p.Q_init) # TODO what is this
+Q_Li = parameter_values.evaluate(param.Q_Li_particles_init) # TODO what is this
+U_n = param.n.prim.U
+U_p = param.p.prim.U
+T_ref = param.T_ref
+# solve for "x_100", "y_100", "Q", "x_0", "y_0"
+esoh_solver = pybamm.lithium_ion.ElectrodeSOHSolver(parameter_values, param)
+inputs={ "V_min": Vmin, "V_max": Vmax, "Q_n": Q_n, "Q_p": Q_p, "Q_Li": Q_Li}
+esoh_sol = esoh_solver.solve(inputs)
+for var in ["x_100", "y_100", "Q", "x_0", "y_0"]:
+    print(var, ":", esoh_sol[var].data[0])
