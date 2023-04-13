@@ -56,22 +56,25 @@ parameter_values["Positive electrode porosity"] = 0.26
 parameter_values["Positive electrode active material volume fraction"] = 0.5846
 parameter_values["Positive particle radius [m]"] = 5.00e-8
 
-# customize parameter values
+# customize parameter values, line 62-65 updated according to SOH_calc 
 parameter_values["Positive electrode OCP [V]"] = LFP_OCP
 # del parameter_values["Current function [A]"]
-parameter_values['Nominal cell capacity [A.h]'] = parameter_values['Nominal cell capacity [A.h]'] / 169.97 * 160.0 # this is also because of the data from Nat Mater paper
-parameter_values["Typical current [A]"] = parameter_values["Typical current [A]"] / 169.97 * 160.0
+parameter_values["Initial concentration in negative electrode [mol.m-3]"] = 10234.014906833087
+parameter_values["Initial concentration in positive electrode [mol.m-3]"] = 0.025586977415651448
+parameter_values['Nominal cell capacity [A.h]'] = 1.092869235291763
+parameter_values["Typical current [A]"] = 1.092869235291763
 
 model = pybamm.lithium_ion.DFN()
 
-c_rate = 2.0
+c_rate = 0.5
 time = 1/c_rate
 experiment_text = "Discharge at %.4fC for %.4f hours" %(c_rate, time) #  or until 2.0 V
 experiment = pybamm.Experiment([experiment_text])
 sim = pybamm.Simulation(model, parameter_values=parameter_values, experiment=experiment)
-solver = pybamm.CasadiSolver() 
+# solver = pybamm.CasadiSolver() 
 SoC_init = 1.0
-sim.solve(initial_soc=SoC_init, solver=solver) 
+# sim.solve(initial_soc=SoC_init, solver=solver) 
+sim.solve() 
 
 
 # ## smaller time steps for finer resolution of simulation
@@ -93,18 +96,18 @@ A = solution['Current [A]'].entries
 V = solution["Terminal voltage [V]"].entries
 SoC = SoC_init-solution['Discharge capacity [A.h]'].entries/parameter_values["Nominal cell capacity [A.h]"]
 
-# import matplotlib as mpl  
-# mpl.rc('font',family='Arial')
-# plt.figure(figsize=(5.5,4))
-# plt.plot(SoC, V,'b-',label="Diffthermo")
-# plt.xlabel("SoC")
-# plt.ylabel("Terminal voltage [V]")
-# plt.xlim([0,1])
+import matplotlib as mpl  
+mpl.rc('font',family='Arial')
+plt.figure(figsize=(5.5,4))
+plt.plot(SoC, V,'b-',label="Diffthermo")
+plt.xlabel("SoC")
+plt.ylabel("Terminal voltage [V]")
+plt.xlim([0,1])
 print(t.max())
-# plt.xticks(fontsize=10)
-# plt.yticks(fontsize=10)
-# plt.legend()
-# plt.show()
+plt.xticks(fontsize=10)
+plt.yticks(fontsize=10)
+plt.legend()
+plt.show()
 # plt.savefig('diffthermo.png', dpi=200, bbox_inches='tight') 
 # plt.close()
 

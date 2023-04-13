@@ -96,3 +96,39 @@ inputs={ "V_min": Vmin, "V_max": Vmax, "Q_n": Q_n, "Q_p": Q_p, "Q_Li": Q_Li}
 esoh_sol = esoh_solver.solve(inputs)
 for var in ["x_100", "y_100", "Q", "x_0", "y_0"]:
     print(var, ":", esoh_sol[var].data[0])
+
+x_0 = esoh_sol["x_0"].data[0]
+x_100 = esoh_sol["x_100"].data[0]
+y_0 = esoh_sol["y_0"].data[0]
+y_100 = esoh_sol["y_100"].data[0]
+Q = esoh_sol["Q"].data[0] # unit A.h
+
+# For LFP cathode (positive electrode), we need to update 
+# 'Initial concentration in positive electrode [mol.m-3]', converted from y_100*Q_p
+# Let
+# thickness = d
+# area = A
+# total volume = V (= d*A)
+# active material volume fraction = p
+# rho is mass density of LFP
+# total mass of LFP m = pV*rho
+# molar mass of LFP M = 157.757 g/mole
+# total mole of LFP, i.e. total mole of Li  n = m/M, should be equal to 3600*Q_p/F
+# i.e. n = p*V*rho / M = 3600*Q_p/96485
+# i.e. Initial concentration in positive electrode = y_100*n/V = y_100/V*3600*Q_p/96485
+V = parameter_values['Electrode height [m]']*parameter_values['Electrode width [m]']*parameter_values['Positive electrode thickness [m]']
+print("Positive: ",y_100/V*3600*Q_p/96485)
+# print(y_0/V*3600*Q_p/96485)
+
+# For anode, same thing applies
+V = parameter_values['Electrode height [m]']*parameter_values['Electrode width [m]']*parameter_values['Negative electrode thickness [m]']
+# print(x_0/V*3600*Q_n/96485)
+print("Negative: ",x_100/V*3600*Q_n/96485)
+
+# nominal cell capacity
+print("Nominal cell capacity ", Q)
+
+# results:
+parameter_values["Initial concentration in negative electrode [mol.m-3]"] = 10234.014906833087
+parameter_values["Initial concentration in positive electrode [mol.m-3]"] = 0.025586977415651448
+parameter_values['Nominal cell capacity [A.h]'] = 1.092869235291763
