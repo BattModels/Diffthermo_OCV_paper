@@ -14,9 +14,12 @@ def LFP_OCP(sto):
     RK fit for LFP
     sto: stochiometry 
     """
-    x_min_Nat_Mater_paper = 0.05948799345743927 # should be matched to 0.0
-    x_max_Nat_Mater_paper = 0.9934071137200987 # should be matched to 1.0
-    sto = (x_max_Nat_Mater_paper-x_min_Nat_Mater_paper)*sto + x_min_Nat_Mater_paper # streching the soc because Nat Mater paper has a nominal capacity of LFP of 160
+
+    # # TODO this mapping is problematic, turned off now
+    # x_min_Nat_Mater_paper = 0.05948799345743927 # should be matched to 0.0
+    # x_max_Nat_Mater_paper = 0.9934071137200987 # should be matched to 1.0
+    # sto = (x_max_Nat_Mater_paper-x_min_Nat_Mater_paper)*sto + x_min_Nat_Mater_paper # streching the soc because Nat Mater paper has a nominal capacity of LFP of 160
+
     _eps = 1e-7
     # rk params
     G0 = -336668.3750 # G0 is the pure substance gibbs free energy 
@@ -37,6 +40,9 @@ def LFP_OCP(sto):
     mu_e = is_outside_miscibility_gap * mu_outside + (1-is_outside_miscibility_gap) * mu_coex
     return -mu_e/96485.0
 
+
+
+# # import LFP dataset Prada2013
 # parameter_values = pybamm.ParameterValues("Prada2013")
 # # see these modifications at https://github.com/pybamm-team/PyBaMM/commit/eabb72040892b964907e01cdc09130a7e25a1489
 # parameter_values["Current function [A]"] = 1.1  # 1.1 originally
@@ -48,42 +54,18 @@ def LFP_OCP(sto):
 # parameter_values["Positive particle radius [m]"] = 5.00e-8
 # # customize parameter values
 # parameter_values["Positive electrode OCP [V]"] = LFP_OCP
-# # solve init model
-# model = pybamm.lithium_ion.DFN()
-# c_rate = 0.5
-# time = 1/c_rate
-# experiment_text = "Discharge at %.4fC for %.4f hours" %(c_rate, time) #  or until 2.0 V
-# experiment = pybamm.Experiment([experiment_text])
-# sim = pybamm.Simulation(model, parameter_values=parameter_values, experiment=experiment)
-# sim = pybamm.Simulation(model, experiment=experiment, parameter_values=parameter_values)
-# model_sol = sim.solve()
 
 
-# import LFP dataset Prada2013
-parameter_values = pybamm.ParameterValues("Prada2013")
-# see these modifications at https://github.com/pybamm-team/PyBaMM/commit/eabb72040892b964907e01cdc09130a7e25a1489
-parameter_values["Current function [A]"] = 1.1  # 1.1 originally
-parameter_values["Typical current [A]"] = 1.1
-parameter_values["Initial concentration in negative electrode [mol.m-3]"] = 13584.0
-parameter_values["Initial concentration in positive electrode [mol.m-3]"] = 35.0
-parameter_values["Positive electrode porosity"] = 0.26
-parameter_values["Positive electrode active material volume fraction"] = 0.5846
-parameter_values["Positive particle radius [m]"] = 5.00e-8
+# import LFP dataset from AboutEnergy
+parameter_values = pybamm.ParameterValues.create_from_bpx("lfp_18650_cell_BPX.json")
 # customize parameter values
 parameter_values["Positive electrode OCP [V]"] = LFP_OCP
 
-# # import LFP dataset from AboutEnergy
-# parameter_values = pybamm.ParameterValues.create_from_bpx("lfp_18650_cell_BPX.json")
-# # customize parameter values
-# parameter_values["Positive electrode OCP [V]"] = LFP_OCP
-
-# # test
-# parameter_values = pybamm.ParameterValues("Mohtat2020")
 
 # Solve for "x_100", "y_100", "Q", "x_0", "y_0". Detailed description can be found at https://github.com/pybamm-team/PyBaMM/blob/develop/examples/notebooks/models/electrode-state-of-health.ipynb
 param = pybamm.LithiumIonParameters()
 Vmin = 2.0
-Vmax = 4.4
+Vmax = 4.2
 Q_n = parameter_values.evaluate(param.n.Q_init) # TODO what is this? defined in https://pybamm.readthedocs.io/en/latest/_modules/pybamm/parameters/lithium_ion_parameters.html
 Q_p = parameter_values.evaluate(param.p.Q_init) # TODO what is this
 Q_Li = parameter_values.evaluate(param.Q_Li_particles_init) # TODO what is this
@@ -103,32 +85,16 @@ y_0 = esoh_sol["y_0"].data[0]
 y_100 = esoh_sol["y_100"].data[0]
 Q = esoh_sol["Q"].data[0] # unit A.h
 
-# For LFP cathode (positive electrode), we need to update 
-# 'Initial concentration in positive electrode [mol.m-3]', converted from y_100*Q_p
-# Let
-# thickness = d
-# area = A
-# total volume = V (= d*A)
-# active material volume fraction = p
-# rho is mass density of LFP
-# total mass of LFP m = pV*rho
-# molar mass of LFP M = 157.757 g/mole
-# total mole of LFP, i.e. total mole of Li  n = m/M, should be equal to 3600*Q_p/F
-# i.e. n = p*V*rho / M = 3600*Q_p/96485
-# i.e. Initial concentration in positive electrode = y_100*n/V = y_100/V*3600*Q_p/96485
-V = parameter_values['Electrode height [m]']*parameter_values['Electrode width [m]']*parameter_values['Positive electrode thickness [m]']
-print("Positive: ",y_100/V*3600*Q_p/96485)
-# print(y_0/V*3600*Q_p/96485)
+print("\n\n\n")
 
-# For anode, same thing applies
-V = parameter_values['Electrode height [m]']*parameter_values['Electrode width [m]']*parameter_values['Negative electrode thickness [m]']
-# print(x_0/V*3600*Q_n/96485)
-print("Negative: ",x_100/V*3600*Q_n/96485)
-
-# nominal cell capacity
+# uodate params
+print("Positive: ", y_100*parameter_values['Maximum concentration in positive electrode [mol.m-3]'])
+print("Negative: ", x_100*parameter_values['Maximum concentration in negative electrode [mol.m-3]'])
 print("Nominal cell capacity ", Q)
 
-# results:
-parameter_values["Initial concentration in negative electrode [mol.m-3]"] = 10234.014906833087
-parameter_values["Initial concentration in positive electrode [mol.m-3]"] = 0.025586977415651448
-parameter_values['Nominal cell capacity [A.h]'] = 1.092869235291763
+
+# results for AboutEnergy:
+parameter_values["Initial concentration in negative electrode [mol.m-3]"] = 26387.161146266506
+parameter_values["Initial concentration in positive electrode [mol.m-3]"] = 1458.915925685357
+parameter_values['Nominal cell capacity [A.h]'] = 2.1235499318518993
+parameter_values["Typical current [A]"] = 2.1235499318518993
