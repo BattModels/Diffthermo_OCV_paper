@@ -35,18 +35,6 @@ def LFP_OCP(sto):
     mu_e = is_outside_miscibility_gap * mu_outside + (1-is_outside_miscibility_gap) * mu_coex
     return -mu_e/96485.0
 
-
-# # check whether the curve is correct
-# x = np.linspace(0.001, 0.999, 100)
-# ocv = []
-# for i in range(0, len(x)):
-#     ocv.append(LFP_OCP(x[i]).value)
-# plt.plot(x, ocv)
-# # plt.xlim([0.05, 1.0])
-# plt.show()
-# exit()
-
-
 # # import LFP dataset Prada2013
 # parameter_values = pybamm.ParameterValues("Prada2013")
 # # see these modifications at https://github.com/pybamm-team/PyBaMM/commit/eabb72040892b964907e01cdc09130a7e25a1489
@@ -61,13 +49,13 @@ def LFP_OCP(sto):
 # import LFP dataset from AboutEnergy
 parameter_values = pybamm.ParameterValues.create_from_bpx("lfp_18650_cell_BPX.json")
 
-# customize parameter values, line 67-70 updated according to SOH_calc 
+# customize parameter values, line 53-56 updated according to SOH_calc 
 parameter_values["Positive electrode OCP [V]"] = LFP_OCP
 del parameter_values["Current function [A]"]
 parameter_values["Initial concentration in negative electrode [mol.m-3]"] = 26387.161146266506
 parameter_values["Initial concentration in positive electrode [mol.m-3]"] = 1458.915925685357
-parameter_values['Nominal cell capacity [A.h]'] = 2.1235499318518993
-parameter_values["Typical current [A]"] = 2.1235499318518993
+# parameter_values['Nominal cell capacity [A.h]'] = 2.1235499318518993
+# parameter_values["Typical current [A]"] = 2.1235499318518993
 
 
 # model
@@ -112,7 +100,7 @@ def solve(temperature, filename, c_rate, title=""):
         parameter_values=parameter_values,
         solver=solver,
         submesh_types=submesh_types,
-        var_pts=var_pts,          
+        var_pts=var_pts
     )
     # solve
     sol = sim.solve()
@@ -141,25 +129,25 @@ def solve(temperature, filename, c_rate, title=""):
     ax[1].set_ylabel("Error [mV]")
     plt.suptitle(title)
     plt.tight_layout()
-    plt.show()
+    # plt.show()
     # save solution
     npz_name = "custom_LFP_c_rate_%.4f.npz" %(c_rate)
     np.savez(npz_name, t=t_sol, V=V_sol, rmse = rmse)
     return sol
 
 temperature = 25
-# # C/20
+# C/20
 # c_rate = 0.05
 # filename = "LFP_25degC_Co20.csv"
 # solve(temperature, filename, c_rate, title="LFP C/20");
-# # C/2
-# c_rate = 0.5
-# filename = "LFP_25degC_Co2.csv"
-# solve(temperature, filename, c_rate, title="LFP C/2");
-# # 1C
-# c_rate = 1.0
-# filename = "LFP_25degC_1C.csv"
-# solve(temperature, filename, c_rate, title="LFP 1C");
+# C/2
+c_rate = 0.5
+filename = "LFP_25degC_Co2.csv"
+solve(temperature, filename, c_rate, title="LFP C/2");
+# 1C
+c_rate = 1.0
+filename = "LFP_25degC_1C.csv"
+solve(temperature, filename, c_rate, title="LFP 1C");
 # 2C
 c_rate = 2.0
 filename = "LFP_25degC_2C.csv"
