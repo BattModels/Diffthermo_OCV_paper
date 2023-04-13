@@ -9,11 +9,10 @@ def LFP_OCP(sto):
     RK fit for LFP
     sto: stochiometry 
     """
-
     x_min_Nat_Mater_paper = 0.05948799345743927 # should be matched to 0.0
     x_max_Nat_Mater_paper = 0.9934071137200987 # should be matched to 1.0
     sto = (x_max_Nat_Mater_paper-x_min_Nat_Mater_paper)*sto + x_min_Nat_Mater_paper # streching the soc because Nat Mater paper has a nominal capacity of LFP of 160
-
+    
     _eps = 1e-7
     # rk params
     G0 = -336668.3750 # G0 is the pure substance gibbs free energy 

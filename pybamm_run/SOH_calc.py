@@ -83,8 +83,8 @@ parameter_values["Positive electrode OCP [V]"] = LFP_OCP
 # Solve for "x_100", "y_100", "Q", "x_0", "y_0". Detailed description can be found at https://github.com/pybamm-team/PyBaMM/blob/develop/examples/notebooks/models/electrode-state-of-health.ipynb
 param = pybamm.LithiumIonParameters()
 Vmin = 2.0
-Vmax = 4.2
-Q_n = parameter_values.evaluate(param.n.Q_init) # TODO what is this
+Vmax = 4.4
+Q_n = parameter_values.evaluate(param.n.Q_init) # TODO what is this? defined in https://pybamm.readthedocs.io/en/latest/_modules/pybamm/parameters/lithium_ion_parameters.html
 Q_p = parameter_values.evaluate(param.p.Q_init) # TODO what is this
 Q_Li = parameter_values.evaluate(param.Q_Li_particles_init) # TODO what is this
 U_n = param.n.prim.U
