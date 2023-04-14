@@ -43,11 +43,11 @@ for i in range(0, len(c_rates)):
     temperature = 25
     indices = ax_i_j[i]
     ax_now = ax[indices[0]][indices[1]]
-    ax_now.plot(voltage_data[:, 0], voltage_data[:, 1], "k-", label=f"Experiment ({temperature}\N{DEGREE SIGN}), {c_rates_label[i]}")
-    ax_now.plot(t, V, "b--", label=f"This Work ({temperature}\N{DEGREE SIGN}), {c_rates_label[i]}")
-    ax_now.plot(t_a, V_a, "r--", label=f"AboutEnergy ({temperature}\N{DEGREE SIGN}), {c_rates_label[i]}")
-    ax_now.set_xlabel("Time [s]", fontsize=14)
-    ax_now.set_ylabel("Voltage [V]", fontsize=14)
+    ax_now.plot(voltage_data[:, 0], voltage_data[:, 1], "k-", label=f"Experiment, {c_rates_label[i]}")
+    ax_now.plot(t, V, "b--", label=f"This Work, {c_rates_label[i]}")
+    # ax_now.plot(t_a, V_a, "r--", label=f"AboutEnergy, {c_rates_label[i]}")
+    ax_now.set_xlabel("Time (s)", fontsize=14)
+    ax_now.set_ylabel("Voltage (V)", fontsize=14)
     ax_now.set_ylim([1.9, 3.8])
     ax_now.set_xlim([-t.max()/100, t.max()*1.01])
     ax_now.legend(fontsize=12)
@@ -94,8 +94,8 @@ for i in range(0, len(c_rates)):
     ax_now.plot(voltage_data[:, 0], voltage_data[:, 1], "k-", label=f"Experiment, {c_rates_label[i]}")
     ax_now.plot(t, V, "b--", label=f"This Work, {c_rates_label[i]}")
     ax_now.plot(t_a, V_a, "r--", label=f"AboutEnergy, {c_rates_label[i]}")
-    ax_now.set_xlabel("Time [s]", fontsize=14)
-    ax_now.set_ylabel("Voltage [V]", fontsize=14)
+    ax_now.set_xlabel("Time (s)", fontsize=14)
+    ax_now.set_ylabel("Voltage (V)", fontsize=14)
     ax_now.set_ylim([1.9, 3.8])
     ax_now.set_xlim([-t.max()/100, t.max()*1.01])
     ax_now.legend(fontsize=12)
@@ -113,8 +113,8 @@ for i in range(0, len(c_rates)):
     label = label + "%.3f mV" %(rmse)
     ax_now.plot(t, (V_a - voltage_data[:, 1]) * 1000, "r-", label = label)
     # settings
-    ax_now.set_xlabel("Time [s]")
-    ax_now.set_ylabel("Error [mV]")
+    ax_now.set_xlabel("Time (s)")
+    ax_now.set_ylabel("Error (mV)")
     ax_now.set_xlim([-t.max()/100, t.max()*1.01])
     ax_now.legend(fontsize=12)
     ax_now.tick_params(axis='both', which='major', labelsize=14)  
@@ -132,7 +132,7 @@ plt.figure(figsize=(5.5,4))
 plt.plot(c_rates,rmses_diffthermo, "b-*", label="This Work")
 plt.plot(c_rates,rmses_AboutEnergy, "r-*", label="AboutEnergy")
 plt.xlabel("C Rate", fontsize=18) # fontsize = 14
-plt.ylabel("RMSE [mV]", fontsize=18) # fontsize = 14
+plt.ylabel("RMSE (mV)", fontsize=18) # fontsize = 14
 plt.xticks(fontsize=18) # fontsize = 14
 plt.yticks(fontsize=18) # fontsize = 14
 plt.legend(fontsize = 14)

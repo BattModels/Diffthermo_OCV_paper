@@ -59,6 +59,14 @@ parameter_values = pybamm.ParameterValues.create_from_bpx("lfp_18650_cell_BPX.js
 # customize parameter values
 parameter_values["Positive electrode OCP [V]"] = LFP_OCP
 
+# # check AboutEnergy OCV model
+# ocv_a = parameter_values['Positive electrode OCP [V]']
+# xs = np.linspace(0.09, 0.95, 10000)
+# ocv = []
+# for x in xs:
+#     ocv.append(ocv_a(x).value)
+# plt.plot(xs, np.array(ocv))
+# plt.show()
 
 # Solve for "x_100", "y_100", "Q", "x_0", "y_0". Detailed description can be found at https://github.com/pybamm-team/PyBaMM/blob/develop/examples/notebooks/models/electrode-state-of-health.ipynb
 param = pybamm.LithiumIonParameters()
