@@ -49,7 +49,7 @@ for i in range(0, len(c_rates)):
     ax_now.set_xlabel("Time (s)", fontsize=14)
     ax_now.set_ylabel("Voltage (V)", fontsize=14)
     ax_now.set_ylim([1.9, 3.8])
-    ax_now.set_xlim([-t.max()/100, t.max()*1.01])
+    ax_now.set_xlim([-t.max()/100, t.max()*1.02])
     ax_now.legend(fontsize=12)
     ax_now.tick_params(axis='both', which='major', labelsize=14)  
 plt.savefig('Figure3.png', dpi=200, bbox_inches='tight') 
