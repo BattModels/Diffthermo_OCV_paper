@@ -144,8 +144,8 @@ def AIC(k, x_pred, x_real):
     """
     n = len(x_pred)
     SSE = np.sum((x_pred-x_real)**2)
-    # aic = 2*k + n*np.log(SSE)
-    aic = 2*k + np.log(SSE)
+    aic = 2*k + n*np.log(SSE)
+    # aic = 2*k + np.log(SSE)
     return aic  
 
 
