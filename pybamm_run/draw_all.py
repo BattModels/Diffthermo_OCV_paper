@@ -44,7 +44,7 @@ for i in range(0, len(c_rates)):
     indices = ax_i_j[i]
     ax_now = ax[indices[0]][indices[1]]
     ax_now.plot(voltage_data[:, 0], voltage_data[:, 1], "k-", label=f"Experiment, {c_rates_label[i]}")
-    ax_now.plot(t, V, "b--", label=f"This Work, {c_rates_label[i]}")
+    ax_now.plot(t, V, "b--", label=f"PyBamm Simulation, {c_rates_label[i]}")
     # ax_now.plot(t_a, V_a, "r--", label=f"AboutEnergy, {c_rates_label[i]}")
     ax_now.set_xlabel("Time (s)", fontsize=20)
     ax_now.set_ylabel("Voltage (V)", fontsize=20)
@@ -92,7 +92,7 @@ for i in range(0, len(c_rates)):
     # simulation plot
     ax_now = ax[i][0]
     ax_now.plot(voltage_data[:, 0], voltage_data[:, 1], "k-", label=f"Experiment, {c_rates_label[i]}")
-    ax_now.plot(t, V, "b--", label=f"This Work, {c_rates_label[i]}")
+    ax_now.plot(t, V, "b--", label=f"PyBamm Simulation, {c_rates_label[i]}")
     # ax_now.plot(t_a, V_a, "r--", label=f"AboutEnergy, {c_rates_label[i]}")
     ax_now.set_xlabel("Time (s)", fontsize=20)
     ax_now.set_ylabel("Voltage (V)", fontsize=20)
