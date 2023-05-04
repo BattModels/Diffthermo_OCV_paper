@@ -18,3 +18,4 @@ draw_all.py: collect results from all 4 OCV models and draw Figure 2 of the manu
 
 
 
+graphite: testing code, where train.py is adapted so that it supports multiple miscibility gaps in OCV profile. Work in this folder doesn't appear in the paper. Data from https://iopscience.iop.org/article/10.1149/2.015301jes, Figure 2

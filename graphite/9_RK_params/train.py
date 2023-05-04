@@ -50,7 +50,7 @@ def GibbsFE(x, params_list, T = 300):
     """
     G0 = params_list[-1]
     x = torch.clamp(x, min=_eps, max=1.0-_eps)
-    G = x*G0 + (1-x)*0 + 8.314*T*(x*torch.log(x)+(1-x)*torch.log(1-x)) 
+    G = x*G0 + (1-x)*0.0 + 8.314*T*(x*torch.log(x)+(1-x)*torch.log(1-x)) 
     for i in range(0, len(params_list)-1):
         G = G + x*(1-x)*(params_list[i]*(1-2*x)**i)
     return G
@@ -412,7 +412,7 @@ def collocation_loss_all_pts(mu, x, phase_boundarys_fixed_point, GibbsFunction, 
 
 # read hysterisis data
 working_dir = os.getcwd()
-df = pd.read_csv("graphite.csv",header=None, sep='\t')
+df = pd.read_csv("graphite.csv",header=None)
 data = df.to_numpy()
 x = data[:,0]
 mu = -data[:,1]*96485 # because -mu_e- = OCV*F, -OCV*F = mu
@@ -422,31 +422,22 @@ x = torch.from_numpy(x)
 mu = mu.astype("float32")
 mu = torch.from_numpy(mu)
 os.chdir(working_dir)
-
 # init log
 with open("log",'w') as fin:
     fin.write("")
 
 # init params that wait for training 
-G0_start = np.random.randint(-100,-50)*5000 # G0 is the pure substance gibbs free energy 
-Omega0_start = np.random.randint(-100,100)*100
-Omega1_start = np.random.randint(-100,100)*100
-Omega2_start = np.random.randint(-100,100)*100
-Omega3_start = np.random.randint(-100,100)*100
-Omega4_start = np.random.randint(-100,100)*100
-Omega5_start = np.random.randint(-100,100)*100
-
-
-# AMYAO DEBUG TODO BUG
-G0_start = -37692.6172  
-Omega0_start = 50461.1797 
-Omega1_start = -56895.4219 
-Omega2_start = 40025.6328 
-Omega3_start = -47680.5195 
-Omega4_start = 110134.1719 
-Omega5_start = -108589.5234 
-
-
+G0_start = np.random.randint(-10,-5)*5000 # G0 is the pure substance gibbs free energy 
+Omega0_start = np.random.randint(-10,10)*100
+Omega1_start = np.random.randint(-10,10)*100
+Omega2_start = np.random.randint(-10,10)*100
+Omega3_start = np.random.randint(-10,10)*100
+Omega4_start = np.random.randint(-10,10)*100
+Omega5_start = np.random.randint(-10,10)*100
+Omega6_start = np.random.randint(-10,10)*100
+Omega7_start = np.random.randint(-10,10)*100
+Omega8_start = np.random.randint(-10,10)*100
+Omega9_start = np.random.randint(-10,10)*100
 G0 = nn.Parameter( torch.from_numpy(np.array([G0_start],dtype="float32")) ) 
 Omega0 = nn.Parameter( torch.from_numpy(np.array([Omega0_start],dtype="float32")) ) 
 Omega1 = nn.Parameter( torch.from_numpy(np.array([Omega1_start],dtype="float32")) ) 
@@ -454,13 +445,17 @@ Omega2 = nn.Parameter( torch.from_numpy(np.array([Omega2_start],dtype="float32")
 Omega3 = nn.Parameter( torch.from_numpy(np.array([Omega3_start],dtype="float32")) ) 
 Omega4 = nn.Parameter( torch.from_numpy(np.array([Omega4_start],dtype="float32")) ) 
 Omega5 = nn.Parameter( torch.from_numpy(np.array([Omega5_start],dtype="float32")) ) 
+Omega6 = nn.Parameter( torch.from_numpy(np.array([Omega6_start],dtype="float32")) ) 
+Omega7 = nn.Parameter( torch.from_numpy(np.array([Omega7_start],dtype="float32")) ) 
+Omega8 = nn.Parameter( torch.from_numpy(np.array([Omega8_start],dtype="float32")) ) 
+Omega9 = nn.Parameter( torch.from_numpy(np.array([Omega8_start],dtype="float32")) ) 
 # declare all params
 # params_list = [Omega0, Omega1, Omega2, Omega3, G0] 
-params_list = [Omega0, Omega1, Omega2, Omega3, Omega4, Omega5, G0] 
+params_list = [Omega0, Omega1, Omega2, Omega3, Omega4, Omega5, Omega6, Omega7, Omega8, Omega9, G0] 
 
 # init optimizer
 learning_rate = 1000.0
-params_list_for_optimizer = [Omega0, Omega1, Omega2, Omega3, Omega4, Omega5, G0] 
+params_list_for_optimizer = [Omega0, Omega1, Omega2, Omega3, Omega4, Omega5, Omega6, Omega7, Omega8, Omega9, G0] 
 # params_list_for_optimizer = [Omega0, Omega1, Omega2, Omega3, G0] 
 optimizer = optim.Adam(params_list_for_optimizer, lr=learning_rate)
 
@@ -477,7 +472,7 @@ epoch_record = []
 # for epoch in range(0, total_epochs):
 loss = 9999.9 # init total loss
 epoch = -1
-while loss > 0.01 and epoch < 8000:
+while loss > 0.0001 and epoch < 8000:
     # clean grad info
     optimizer.zero_grad()
     # use current params to calculate predicted phase boundary
@@ -488,10 +483,9 @@ while loss > 0.01 and epoch < 8000:
     loss_collocation = 0.0 # collocation points loss
     loss_fake_gap = 0.0 # penalizing the redundant miscibility gap(s)
     # sample the Gibbs free energy landscape
-    sample = sampling(GibbsFE, params_list, T=300, sampling_id=1, ngrid=999)
+    sample = sampling(GibbsFE, params_list, T=300, sampling_id=1)
     # give the initial guess of miscibility gap
-    phase_boundarys_init, _ = convex_hull(sample, ngrid=999) 
-    print(phase_boundarys_init)
+    phase_boundarys_init, _ = convex_hull(sample) 
     # refinement & calculate loss
     if phase_boundarys_init != []:
         # There is at least one phase boundary predicted 
@@ -504,7 +498,6 @@ while loss > 0.01 and epoch < 8000:
     else:
         # No boundary find.
         phase_boundary_fixed_point = []
-    print(phase_boundary_fixed_point)
     loss_collocation = alpha_collocation * collocation_loss_all_pts(mu, x, phase_boundary_fixed_point, GibbsFE, params_list, alpha_miscibility, T=300)
     # backprop
     loss = loss_collocation*1.0
@@ -539,27 +532,6 @@ while loss > 0.01 and epoch < 8000:
             mu_pred.append(mu_pred_now.detach().numpy())
         mu_pred = np.array(mu_pred)
         SOC = x.clone().numpy()
-
-        # AMYAO DEBUG
-        g_pred = [] # AMYAO DEBUG
-        mu_pred = []
-        # x = np.arange(1,100)/100
-        # x = torch.from_numpy(x.astype("float32"))
-        for i in range(0, len(x)):
-            x_now = x[i]
-            x_now = x_now.requires_grad_()
-            g_now = GibbsFE(x_now, params_list, T=300)
-            mu_pred_now = autograd.grad(outputs=g_now, inputs=x_now, create_graph=True)[0]
-            mu_pred.append(mu_pred_now.detach().numpy())
-            g_pred.append(g_now.detach().numpy()) 
-        g_pred = np.array(g_pred)
-        SOC = x.clone().numpy()
-        plt.figure(figsize=(5,4))
-        # plt.plot(SOC, g_pred, 'k--')
-        plt.plot(SOC, mu_pred, 'k--')
-        plt.show()
-        exit()
-
         # plot figure
         plt.figure(figsize=(5,4))
         # plot the one before common tangent construction
@@ -635,27 +607,4 @@ while loss > 0.01 and epoch < 8000:
 
 
 print("Training Complete.\n")
-
-# # # plot Gibbs free energy landscape
-# mu_pred = []
-# g_pred = []
-# ngrid = 99
-# x_pred = torch.from_numpy( np.linspace(1/(ngrid+1),1-1/(ngrid+1),ngrid) )
-# for i in range(0, len(x_pred)):
-#     x_now = x_pred[i]
-#     mu_now = mu[i]
-#     x_now = x_now.requires_grad_()
-#     g_now = GibbsFE(x_now, params_list, T=300)
-#     g_pred.append(g_now.detach().numpy())
-#     mu_pred_now = autograd.grad(outputs=g_now, inputs=x_now, create_graph=True)[0]
-#     mu_pred.append(mu_pred_now.detach().numpy())
-# mu_pred = np.array(mu_pred)
-# x_pred = 1.0 - x_pred.numpy()
-# g_pred = np.array(g_pred)
-# plt.figure(figsize=(5,4))
-# plt.plot(x_pred, g_pred, label="pred")
-# plt.xlim([0,1])
-# plt.legend()
-# plt.savefig("Final_g.png", bbox_inches='tight')
-# plt.close()
 exit()
