@@ -22,13 +22,13 @@ LMP: containing the diffthermo model which learns the discharging OCV curve of L
 LMFP: containing the diffthermo model which learns the discharging OCV curve of LiMn0.5Fe0.5PO4 with 7 RK params (see LMFP/7_RK_Params). Data is from https://www.mdpi.com/2313-0105/4/3/39, Figure 1. Data digitized by WebPlotDigitizer https://automeris.io/WebPlotDigitizer/. 
 
 
-NCA: containing the diffthermo model which learns the discharging OCV curve of NCA with 5-6 RK params (basically falling back to regular RK, since no miscibility gap detected, see NCA/5_RK_Params, NCA/6_RK_Params and NCA/7_RK_Params). Data from https://github.com/pybamm-team/PyBaMM/blob/develop/pybamm/input/parameters/lithium_ion/data/nca_ocp_Kim2011_data.csv
+NCA: containing the diffthermo model which learns the discharging OCV curve of NCA with 5-6 RK params (basically falling back to regular RK, since no miscibility gap detected, see NCA/5_RK_Params, NCA/6_RK_Params and NCA/7_RK_Params). Data from https://iopscience.iop.org/article/10.1149/1.3597614/meta, processed by PyBamm: https://github.com/pybamm-team/PyBaMM/blob/develop/pybamm/input/parameters/lithium_ion/data/nca_ocp_Kim2011_data.csv
 
 
-NCO: containing the diffthermo model which learns the discharging OCV curve of NCO with 5-6 RK params (basically falling back to regular RK, since no miscibility gap detected, see NCO/5_RK_Params and NCO/6_RK_Params). Data from https://github.com/pybamm-team/PyBaMM/blob/develop/pybamm/input/parameters/lithium_ion/data/nco_ocp_Ecker2015.csv
+NCO: containing the diffthermo model which learns the discharging OCV curve of NCO with 5-6 RK params (basically falling back to regular RK, since no miscibility gap detected, see NCO/5_RK_Params and NCO/6_RK_Params). Data from https://iopscience.iop.org/article/10.1149/2.0551509jes/meta, processed by PyBamm: https://github.com/pybamm-team/PyBaMM/blob/develop/pybamm/input/parameters/lithium_ion/data/nco_ocp_Ecker2015.csv
 
 
-NMC: containing the diffthermo model which learns the discharging OCV curve of NMC with 5-6 RK params (basically falling back to regular RK, since no miscibility gap detected, see NMC/5_RK_Params and NMC/6_RK_Params). Data from https://github.com/pybamm-team/PyBaMM/blob/develop/pybamm/input/parameters/lithium_ion/data/nmc_LGM50_ocp_Chen2020.csv
+NMC: containing the diffthermo model which learns the discharging OCV curve of NMC with 5-6 RK params (basically falling back to regular RK, since no miscibility gap detected, see NMC/5_RK_Params and NMC/6_RK_Params). Data from https://iopscience.iop.org/article/10.1149/1945-7111/ab9050/meta, processed by PyBamm: https://github.com/pybamm-team/PyBaMM/blob/develop/pybamm/input/parameters/lithium_ion/data/nmc_LGM50_ocp_Chen2020.csv
 
 
 

@@ -12,6 +12,11 @@ global is_print , _eps
 is_print = False
 _eps = 1e-7
 
+try:
+    os.mkdir("records")
+except:
+    pass
+
 
 """
 The basic theory behind:
@@ -407,26 +412,33 @@ def collocation_loss_all_pts(mu, x, phase_boundarys_fixed_point, GibbsFunction, 
 
 # read hysterisis data
 working_dir = os.getcwd()
-df = pd.read_csv("graphite.csv",header=None)
+df = pd.read_csv("LiMnPO4.csv",header=None)
 data = df.to_numpy()
-x = data[:,0]
-x_true = data[:,0]
+x = data[:,0]/170.87 # theoretical capacity of LiMnPO4
 mu = -data[:,1]*96485 # because -mu_e- = OCV*F, -OCV*F = mu
+
+# # AMYAO DEBUG
+# plt.figure(figsize=(5,4))
+# plt.plot(x, mu, 'k--')
+# plt.show()
+# exit()
+
+
 # convert to torch.tensor
 x = x.astype("float32")
 x = torch.from_numpy(x)
 mu = mu.astype("float32")
 mu = torch.from_numpy(mu)
+os.chdir(working_dir)
 
-G0_start = -12254.9414 
-Omega0_start = -2368.2908 
-Omega1_start = -4401.7715 
-Omega2_start = 13879.9395 
-Omega3_start = -52430.7227 
-Omega4_start = -43530.1719 
-Omega5_start = 139934.6719 
-Omega6_start = 19018.1602 
-Omega7_start = -118288.8906 
+
+# init params that wait for training 
+Omega0_start = -70752.6250 
+Omega1_start = 67894.5547 
+Omega2_start = -41201.6484 
+Omega3_start = 22804.5215 
+Omega4_start = -35592.1719 
+G0_start = -353011.1250   
 
 G0 = nn.Parameter( torch.from_numpy(np.array([G0_start],dtype="float32")) ) 
 Omega0 = nn.Parameter( torch.from_numpy(np.array([Omega0_start],dtype="float32")) ) 
@@ -434,16 +446,33 @@ Omega1 = nn.Parameter( torch.from_numpy(np.array([Omega1_start],dtype="float32")
 Omega2 = nn.Parameter( torch.from_numpy(np.array([Omega2_start],dtype="float32")) ) 
 Omega3 = nn.Parameter( torch.from_numpy(np.array([Omega3_start],dtype="float32")) ) 
 Omega4 = nn.Parameter( torch.from_numpy(np.array([Omega4_start],dtype="float32")) ) 
-Omega5 = nn.Parameter( torch.from_numpy(np.array([Omega5_start],dtype="float32")) ) 
-Omega6 = nn.Parameter( torch.from_numpy(np.array([Omega6_start],dtype="float32")) ) 
-Omega7 = nn.Parameter( torch.from_numpy(np.array([Omega7_start],dtype="float32")) ) 
+# Omega5 = nn.Parameter( torch.from_numpy(np.array([Omega5_start],dtype="float32")) ) 
 # declare all params
-# params_list = [Omega0, Omega1, Omega2, Omega3, G0] 
-params_list = [Omega0, Omega1, Omega2, Omega3, Omega4, Omega5, Omega6, Omega7, G0] 
+params_list = [Omega0, Omega1, Omega2, Omega3, Omega4, G0] 
+# params_list = [Omega0, Omega1, Omega2, Omega3, Omega4, Omega5, G0] 
 
+# init optimizer
+learning_rate = 1000.0
+# params_list_for_optimizer = [Omega0, Omega1, Omega2, Omega3, Omega4, Omega5, G0] 
+params_list_for_optimizer = [Omega0, Omega1, Omega2, Omega3, Omega4, G0] 
+optimizer = optim.Adam(params_list_for_optimizer, lr=learning_rate)
+
+# init loss weight
+alpha_collocation = 1.0
+alpha_miscibility = 1.0 # miscibility region is less valued
+
+# train
+params_record = []
+for i in range(0, len(params_list)):
+    params_record.append([])
+epoch_record = []
+# total_epochs = 1000
+# for epoch in range(0, total_epochs):
+loss = 9999.9 # init total loss
 epoch = -1
-while epoch < 0:
+while loss > 0.0001 and epoch < 0:
     # clean grad info
+    optimizer.zero_grad()
     # use current params to calculate predicted phase boundary
     epoch = epoch + 1
     # init loss components
@@ -453,8 +482,11 @@ while epoch < 0:
     loss_fake_gap = 0.0 # penalizing the redundant miscibility gap(s)
     # sample the Gibbs free energy landscape
     sample = sampling(GibbsFE, params_list, T=300, sampling_id=1)
+
+
     # give the initial guess of miscibility gap
     phase_boundarys_init, _ = convex_hull(sample) 
+    # print("Init guess ",phase_boundarys_init) # AMYAO DEBUG
     # refinement & calculate loss
     if phase_boundarys_init != []:
         # There is at least one phase boundary predicted 
@@ -467,76 +499,95 @@ while epoch < 0:
     else:
         # No boundary find.
         phase_boundary_fixed_point = []
-
-    # # draw the fitted results
-    # x = np.arange(0, 1001)/1000
-    # x = torch.from_numpy(x.astype("float32"))
-    mu_pred = []
-    for i in range(0, len(x)):
-        x_now = x[i]
-        x_now = x_now.requires_grad_()
-        g_now = GibbsFE(x_now, params_list, T=300)
-        mu_pred_now = autograd.grad(outputs=g_now, inputs=x_now, create_graph=True)[0]
-        mu_pred.append(mu_pred_now.detach().numpy())
-    mu_pred = np.array(mu_pred)
-    SOC = x.clone().numpy()
-
-
-    # plot figure
-    plt.figure(figsize=(5,4))
-    # plot the one before common tangent construction
-    U_pred_before_ct = mu_pred/(-96485)
-    plt.plot(SOC, U_pred_before_ct, 'k--', label="Prediction Before CT Construction")
-
-
-    # plot the one after common tangent construction
-    mu_pred_after_ct = []
-    # see if x is inside any gaps
-    def _is_inside_gaps(_x, _gaps_list):
-        _is_inside = False
-        _index = -99999
-        for i in range(0, len(_gaps_list)):
-            if _x >= _gaps_list[i][0] and _x <= _gaps_list[i][1]:
-                _is_inside = True
-                _index = i
-                break
-        return _is_inside, _index
-    # pred
-    for i in range(0, len(x)):
-        x_now = x[i]
-        is_inside, index = _is_inside_gaps(x_now, phase_boundary_fixed_point)
-        if is_inside == False:
-            # outside miscibility gap 
-            mu_pred_after_ct.append(mu_pred[i])
-        else: 
-            # inside miscibility gap
-            x_alpha = phase_boundary_fixed_point[index][0]
-            x_beta = phase_boundary_fixed_point[index][1]
-            ct_pred = (GibbsFE(x_alpha, params_list, T=300) - GibbsFE(x_beta, params_list, T=300))/(x_alpha - x_beta) 
-            if torch.isnan(ct_pred) == False:
-                mu_pred_after_ct.append(ct_pred.clone().detach().numpy()[0]) 
-            else:
+    # print("Refinement ",phase_boundary_fixed_point) # AMYAO DEBUG
+    loss_collocation = alpha_collocation * collocation_loss_all_pts(mu, x, phase_boundary_fixed_point, GibbsFE, params_list, alpha_miscibility, T=300)
+    # backprop
+    loss = loss_collocation*1.0
+    loss.backward()
+    optimizer.step()
+    
+    # check training for every 100 epochs
+    if epoch % 100 == 0:
+        # # draw the fitted results
+        mu_pred = []
+        for i in range(0, len(x)):
+            x_now = x[i]
+            mu_now = mu[i]
+            x_now = x_now.requires_grad_()
+            g_now = GibbsFE(x_now, params_list, T=300)
+            mu_pred_now = autograd.grad(outputs=g_now, inputs=x_now, create_graph=True)[0]
+            mu_pred.append(mu_pred_now.detach().numpy())
+        mu_pred = np.array(mu_pred)
+        SOC = x.clone().numpy()
+        # plot figure
+        plt.figure(figsize=(5,4))
+        # plot the one before common tangent construction
+        U_pred_before_ct = mu_pred/(-96485)
+        plt.plot(SOC, U_pred_before_ct, 'k--', label="Prediction Before CT Construction")
+        # plot the one after common tangent construction
+        mu_pred_after_ct = []
+        # see if x is inside any gaps
+        def _is_inside_gaps(_x, _gaps_list):
+            _is_inside = False
+            _index = -99999
+            for i in range(0, len(_gaps_list)):
+                if _x >= _gaps_list[i][0] and _x <= _gaps_list[i][1]:
+                    _is_inside = True
+                    _index = i
+                    break
+            return _is_inside, _index
+        # pred
+        for i in range(0, len(x)):
+            x_now = x[i]
+            mu_now = mu[i]
+            is_inside, index = _is_inside_gaps(x_now, phase_boundary_fixed_point)
+            if is_inside == False:
+                # outside miscibility gap 
                 mu_pred_after_ct.append(mu_pred[i])
-    mu_pred_after_ct = np.array(mu_pred_after_ct)
-    U_pred_after_ct = mu_pred_after_ct/(-96485)
-    plt.plot(SOC, U_pred_after_ct, 'r-', label="Prediction After CT Construction")
-    np.savez("RK_diffthermo.npz", x=SOC, y=U_pred_after_ct) # can be load as data=np.load("RK_diffthermo.npz"), SOC = data['x'], OCV_pred_RK = data['y']
+            else: 
+                # inside miscibility gap
+                x_alpha = phase_boundary_fixed_point[index][0]
+                x_beta = phase_boundary_fixed_point[index][1]
+                ct_pred = (GibbsFE(x_alpha, params_list, T=300) - GibbsFE(x_beta, params_list, T=300))/(x_alpha - x_beta) 
+                if torch.isnan(ct_pred) == False:
+                    mu_pred_after_ct.append(ct_pred.clone().detach().numpy()[0]) 
+                else:
+                    mu_pred_after_ct.append(mu_pred[i])
+        mu_pred_after_ct = np.array(mu_pred_after_ct)
+        U_pred_after_ct = mu_pred_after_ct/(-96485)
+        plt.plot(SOC, U_pred_after_ct, 'r-', label="Prediction After CT Construction")
+        U_true_value = mu.numpy()/(-96485) # plot the true value
+        plt.plot(SOC, U_true_value, 'b-', label="True OCV")
+        plt.xlim([0,1])
+        plt.ylim([2.0, 5.0])
+        plt.legend()
+        np.savez("RK_diffthermo.npz", x=SOC, y=U_pred_after_ct) # can be load as data=np.load("RK_diffthermo.npz"), SOC = data['x'], OCV_pred_RK = data['y']
 
-
-    U_true_value = mu.numpy()/(-96485) # plot the true value
-    plt.plot(x_true, U_true_value, 'b-', label="True OCV")
-
-
-    plt.xlim([0,1])
-    plt.ylim([0.0, 0.6])
-    plt.legend()
-    plt.xlabel("SOC")
-    plt.ylabel("OCV")
-    fig_name = "Pred.png"
-    plt.show()
-    # plt.savefig(fig_name, bbox_inches='tight')
-    plt.close()
+        
 
 
 print("Training Complete.\n")
+
+# # # plot Gibbs free energy landscape
+# mu_pred = []
+# g_pred = []
+# ngrid = 99
+# x_pred = torch.from_numpy( np.linspace(1/(ngrid+1),1-1/(ngrid+1),ngrid) )
+# for i in range(0, len(x_pred)):
+#     x_now = x_pred[i]
+#     mu_now = mu[i]
+#     x_now = x_now.requires_grad_()
+#     g_now = GibbsFE(x_now, params_list, T=300)
+#     g_pred.append(g_now.detach().numpy())
+#     mu_pred_now = autograd.grad(outputs=g_now, inputs=x_now, create_graph=True)[0]
+#     mu_pred.append(mu_pred_now.detach().numpy())
+# mu_pred = np.array(mu_pred)
+# x_pred = 1.0 - x_pred.numpy()
+# g_pred = np.array(g_pred)
+# plt.figure(figsize=(5,4))
+# plt.plot(x_pred, g_pred, label="pred")
+# plt.xlim([0,1])
+# plt.legend()
+# plt.savefig("Final_g.png", bbox_inches='tight')
+# plt.close()
 exit()
