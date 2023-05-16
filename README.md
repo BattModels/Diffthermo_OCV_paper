@@ -22,5 +22,13 @@ LMP: containing the diffthermo model which learns the discharging OCV curve of L
 LMFP: containing the diffthermo model which learns the discharging OCV curve of LiMn0.5Fe0.5PO4 with x RK params. Data is from https://www.mdpi.com/2313-0105/4/3/39, Figure 1. Data digitized by WebPlotDigitizer https://automeris.io/WebPlotDigitizer/. 
 
 
+NCA: Data from https://github.com/pybamm-team/PyBaMM/blob/develop/pybamm/input/parameters/lithium_ion/data/nca_ocp_Kim2011_data.csv
+
+
+NCO: Data from https://github.com/pybamm-team/PyBaMM/blob/develop/pybamm/input/parameters/lithium_ion/data/nco_ocp_Ecker2015.csv
+
+
+NMC: data from https://github.com/pybamm-team/PyBaMM/blob/develop/pybamm/input/parameters/lithium_ion/data/nmc_LGM50_ocp_Chen2020.csv
+
 
 
