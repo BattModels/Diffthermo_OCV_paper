@@ -31,4 +31,15 @@ NCO: containing the diffthermo model which learns the discharging OCV curve of N
 NMC: containing the diffthermo model which learns the discharging OCV curve of NMC with 5-6 RK params (basically falling back to regular RK, since no miscibility gap detected, see NMC/5_RK_Params and NMC/6_RK_Params). Data from https://iopscience.iop.org/article/10.1149/1945-7111/ab9050/meta, processed by PyBamm: https://github.com/pybamm-team/PyBaMM/blob/develop/pybamm/input/parameters/lithium_ion/data/nmc_LGM50_ocp_Chen2020.csv
 
 
+LMO: containing the diffthermo model which learns the discharging OCV curve of LMO with 5 RK params (basically falling back to regular RK, since no miscibility gap detected, see LMO/5_RK_Params). Data from https://iopscience.iop.org/article/10.1149/2.096205jes.
+
+
+LTO: (Li4/3 Ti 5/3 O4) containing the diffthermo model which learns the discharging OCV curve of LTO with 4 RK params. Data from https://doi.org/10.1016/j.jpowsour.2006.11.024 
+
+
+Si: ontaining the diffthermo model which learns the discharging OCV curve of Si (first round of discharging, and assume full lithiation, i.e. Li15Si4, thus having capacity of 3600 mAh/g) with 6 RK params. 
+Data from https://pubs.rsc.org/en/content/articlelanding/2018/RA/C7RA13489D
+
+
+
 

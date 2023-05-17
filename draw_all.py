@@ -14,7 +14,7 @@ from matplotlib.ticker import FormatStrFormatter
 mpl.rc('font',family='Arial')
 
 # define canvas
-fig, ax = plt.subplots(3, 3, figsize=(22.5, 22.5))
+fig, ax = plt.subplots(4, 3, figsize=(22.5, 30))
 
 # LFP, true OCV
 os.chdir("LFP/Discharge_4_RK_params")
@@ -172,6 +172,84 @@ ax_now.tick_params(axis='both', which='major', labelsize=20)
 ax_now.locator_params(axis='both', nbins=5)
 
 
+# LTO, true OCV
+os.chdir("LTO/4_RK_params")
+df = pd.read_csv("LTO.csv",header=None)
+data = df.to_numpy()
+SOC_true_LTO = 1.0-data[:,0]/175 # theoretical capacity of LTO
+OCV_true_LTO = data[:,1]
+# LTO, diffthermo fit
+data=np.load("RK_diffthermo.npz")
+SOC_diffthermo_LTO = data['x']
+OCV_diffthermo_LTO = data['y']
+# print(SOC_true_LTO, OCV_true_LTO) # AMYAO DEBUG
+# print("******")
+# print(SOC_diffthermo_LTO, OCV_diffthermo_LTO) # AMYAO DEBUG
+# exit()
+os.chdir(working_dir)
+# draw
+ax_now = ax[2][0]
+ax_now.plot(SOC_true_LTO, OCV_true_LTO, "k-", label="True Value")
+ax_now.plot(SOC_diffthermo_LTO, OCV_diffthermo_LTO, "b--", label="This Work")
+ax_now.set_xlabel("SOC", fontsize=20)
+ax_now.set_ylabel("OCV (V)", fontsize=20)
+ax_now.set_ylim([0.7, 2.6])
+ax_now.set_xlim([0.0, 1.0])
+ax_now.legend(fontsize=16)
+ax_now.set_title('Li$_{4/3}$Ti$_{5/3}$O$_{4}$, 4 RK Parameters',fontsize=20)
+ax_now.tick_params(axis='both', which='major', labelsize=20)  
+ax_now.locator_params(axis='both', nbins=5)
+
+
+# Si, true OCV
+os.chdir("Si/6_RK_params")
+df = pd.read_csv("Si.csv",header=None)
+data = df.to_numpy()
+SOC_true_Si = data[:,0]/3600 # theoretical capacity of Si
+OCV_true_Si = data[:,1]
+# Si, diffthermo fit
+data=np.load("RK_diffthermo.npz")
+SOC_diffthermo_Si = data['x']
+OCV_diffthermo_Si = data['y']
+os.chdir(working_dir)
+# draw
+ax_now = ax[2][1]
+ax_now.plot(SOC_true_Si, OCV_true_Si, "k-", label="True Value")
+ax_now.plot(SOC_diffthermo_Si, OCV_diffthermo_Si, "b--", label="This Work")
+ax_now.set_xlabel("SOC", fontsize=20)
+ax_now.set_ylabel("OCV (V)", fontsize=20)
+ax_now.set_ylim([0.0, 0.8])
+ax_now.set_xlim([0.0, 1.0])
+ax_now.legend(fontsize=16)
+ax_now.set_title('Si, 6 RK Parameters',fontsize=20)
+ax_now.tick_params(axis='both', which='major', labelsize=20)  
+ax_now.locator_params(axis='both', nbins=5)
+
+
+# LMO, true OCV
+os.chdir("LMO/5_RK_params")
+df = pd.read_csv("LMO.csv",header=None)
+data = df.to_numpy()
+SOC_true_LMO = data[:,0]
+OCV_true_LMO = data[:,1]
+# LMO, diffthermo fit
+data=np.load("RK_diffthermo.npz")
+SOC_diffthermo_LMO = data['x']
+OCV_diffthermo_LMO = data['y']
+os.chdir(working_dir)
+# draw
+ax_now = ax[2][2]
+ax_now.plot(SOC_true_LMO, OCV_true_LMO, "k-", label="True Value")
+ax_now.plot(SOC_diffthermo_LMO, OCV_diffthermo_LMO, "b--", label="This Work")
+ax_now.set_xlabel("SOC", fontsize=20)
+ax_now.set_ylabel("OCV (V)", fontsize=20)
+ax_now.set_ylim([3.38, 4.24])
+ax_now.set_xlim([0.15 ,1.0])
+ax_now.legend(fontsize=16)
+ax_now.set_title('LMO, 5 RK Parameters',fontsize=20)
+ax_now.tick_params(axis='both', which='major', labelsize=20)  
+ax_now.locator_params(axis='both', nbins=5)
+
 
 # NCA, true OCV
 os.chdir("NCA/6_RK_params")
@@ -185,7 +263,7 @@ SOC_diffthermo_NCA = data['x']
 OCV_diffthermo_NCA = data['y']
 os.chdir(working_dir)
 # draw
-ax_now = ax[2][0]
+ax_now = ax[3][0]
 ax_now.plot(SOC_true_NCA, OCV_true_NCA, "k-", label="True Value")
 ax_now.plot(SOC_diffthermo_NCA, OCV_diffthermo_NCA, "b--", label="This Work")
 ax_now.set_xlabel("SOC", fontsize=20)
@@ -211,7 +289,7 @@ SOC_diffthermo_NCO = data['x']
 OCV_diffthermo_NCO = data['y']
 os.chdir(working_dir)
 # draw
-ax_now = ax[2][1]
+ax_now = ax[3][1]
 ax_now.plot(SOC_true_NCO, OCV_true_NCO, "k-", label="True Value")
 ax_now.plot(SOC_diffthermo_NCO, OCV_diffthermo_NCO, "b--", label="This Work")
 ax_now.set_xlabel("SOC", fontsize=20)
@@ -237,12 +315,12 @@ SOC_diffthermo_NMC = data['x']
 OCV_diffthermo_NMC = data['y']
 os.chdir(working_dir)
 # draw
-ax_now = ax[2][2]
+ax_now = ax[3][2]
 ax_now.plot(SOC_true_NMC, OCV_true_NMC, "k-", label="True Value")
 ax_now.plot(SOC_diffthermo_NMC, OCV_diffthermo_NMC, "b--", label="This Work")
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
-ax_now.set_ylim([3.4, 4.4])
+ax_now.set_ylim([3.51, 4.42])
 ax_now.set_xlim([0.2, 1.0])
 ax_now.legend(fontsize=16)
 ax_now.set_title('NMC, 6 RK Parameters',fontsize=20)
@@ -251,6 +329,6 @@ ax_now.locator_params(axis='both', nbins=5)
 
 
 
-plt.savefig('Figure.png', dpi=200, bbox_inches='tight') 
+plt.savefig('Figure_raw.png', dpi=200, bbox_inches='tight') 
 plt.close()
 
