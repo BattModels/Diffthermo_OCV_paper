@@ -30,7 +30,7 @@ OCV_diffthermo_LFP = data['y']
 os.chdir(working_dir)
 # draw
 ax_now = ax[0][0]
-ax_now.plot(SOC_true_LFP, OCV_true_LFP, "k-", label="True Value")
+ax_now.plot(SOC_true_LFP, OCV_true_LFP, "k-", label="Experimental Value")
 ax_now.plot(SOC_diffthermo_LFP, OCV_diffthermo_LFP, "b--", label="This Work")
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
@@ -56,7 +56,7 @@ OCV_diffthermo_graphite = data['y']
 os.chdir(working_dir)
 # draw
 ax_now = ax[0][1]
-ax_now.plot(SOC_true_graphite, OCV_true_graphite, "k-", label="True Value")
+ax_now.plot(SOC_true_graphite, OCV_true_graphite, "k-", label="Experimental Value")
 ax_now.plot(SOC_diffthermo_graphite, OCV_diffthermo_graphite, "b--", label="This Work")
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
@@ -82,7 +82,7 @@ OCV_diffthermo_LixFeSiO4 = data['y']
 os.chdir(working_dir)
 # draw
 ax_now = ax[0][2]
-ax_now.plot(SOC_true_LixFeSiO4, OCV_true_LixFeSiO4, "k-", label="True Value")
+ax_now.plot(SOC_true_LixFeSiO4, OCV_true_LixFeSiO4, "k-", label="Experimental Value")
 ax_now.plot(SOC_diffthermo_LixFeSiO4, OCV_diffthermo_LixFeSiO4, "b--", label="This Work")
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
@@ -108,7 +108,7 @@ OCV_diffthermo_LCO = data['y']
 os.chdir(working_dir)
 # draw
 ax_now = ax[1][0]
-ax_now.plot(SOC_true_LCO, OCV_true_LCO, "k-", label="True Value")
+ax_now.plot(SOC_true_LCO, OCV_true_LCO, "k-", label="Experimental Value")
 ax_now.plot(SOC_diffthermo_LCO, OCV_diffthermo_LCO, "b--", label="This Work")
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
@@ -134,7 +134,7 @@ OCV_diffthermo_LMP = data['y']
 os.chdir(working_dir)
 # draw
 ax_now = ax[1][1]
-ax_now.plot(SOC_true_LMP, OCV_true_LMP, "k-", label="True Value")
+ax_now.plot(SOC_true_LMP, OCV_true_LMP, "k-", label="Experimental Value")
 ax_now.plot(SOC_diffthermo_LMP, OCV_diffthermo_LMP, "b--", label="This Work")
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
@@ -160,7 +160,7 @@ OCV_diffthermo_LMFP = data['y']
 os.chdir(working_dir)
 # draw
 ax_now = ax[1][2]
-ax_now.plot(SOC_true_LMFP, OCV_true_LMFP, "k-", label="True Value")
+ax_now.plot(SOC_true_LMFP, OCV_true_LMFP, "k-", label="Experimental Value")
 ax_now.plot(SOC_diffthermo_LMFP, OCV_diffthermo_LMFP, "b--", label="This Work")
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
@@ -189,7 +189,7 @@ OCV_diffthermo_LTO = data['y']
 os.chdir(working_dir)
 # draw
 ax_now = ax[2][0]
-ax_now.plot(SOC_true_LTO, OCV_true_LTO, "k-", label="True Value")
+ax_now.plot(SOC_true_LTO, OCV_true_LTO, "k-", label="Experimental Value")
 ax_now.plot(SOC_diffthermo_LTO, OCV_diffthermo_LTO, "b--", label="This Work")
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
@@ -214,7 +214,7 @@ OCV_diffthermo_Si = data['y']
 os.chdir(working_dir)
 # draw
 ax_now = ax[2][1]
-ax_now.plot(SOC_true_Si, OCV_true_Si, "k-", label="True Value")
+ax_now.plot(SOC_true_Si, OCV_true_Si, "k-", label="Experimental Value")
 ax_now.plot(SOC_diffthermo_Si, OCV_diffthermo_Si, "b--", label="This Work")
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
@@ -239,7 +239,7 @@ OCV_diffthermo_LMO = data['y']
 os.chdir(working_dir)
 # draw
 ax_now = ax[2][2]
-ax_now.plot(SOC_true_LMO, OCV_true_LMO, "k-", label="True Value")
+ax_now.plot(SOC_true_LMO, OCV_true_LMO, "k-", label="Experimental Value")
 ax_now.plot(SOC_diffthermo_LMO, OCV_diffthermo_LMO, "b--", label="This Work")
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
@@ -264,7 +264,7 @@ OCV_diffthermo_NCA = data['y']
 os.chdir(working_dir)
 # draw
 ax_now = ax[3][0]
-ax_now.plot(SOC_true_NCA, OCV_true_NCA, "k-", label="True Value")
+ax_now.plot(SOC_true_NCA, OCV_true_NCA, "k-", label="Experimental Value")
 ax_now.plot(SOC_diffthermo_NCA, OCV_diffthermo_NCA, "b--", label="This Work")
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
@@ -290,7 +290,7 @@ OCV_diffthermo_NCO = data['y']
 os.chdir(working_dir)
 # draw
 ax_now = ax[3][1]
-ax_now.plot(SOC_true_NCO, OCV_true_NCO, "k-", label="True Value")
+ax_now.plot(SOC_true_NCO, OCV_true_NCO, "k-", label="Experimental Value")
 ax_now.plot(SOC_diffthermo_NCO, OCV_diffthermo_NCO, "b--", label="This Work")
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
@@ -316,7 +316,7 @@ OCV_diffthermo_NMC = data['y']
 os.chdir(working_dir)
 # draw
 ax_now = ax[3][2]
-ax_now.plot(SOC_true_NMC, OCV_true_NMC, "k-", label="True Value")
+ax_now.plot(SOC_true_NMC, OCV_true_NMC, "k-", label="Experimental Value")
 ax_now.plot(SOC_diffthermo_NMC, OCV_diffthermo_NMC, "b--", label="This Work")
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
