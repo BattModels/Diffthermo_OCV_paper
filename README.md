@@ -9,7 +9,6 @@ LFP: containing the diffthermo model (referred to as "This work" in Figure 2), w
 graphite: containing the diffthermo model which learns the discharging OCV curve of LFP with 7 RK params (see graphite/7_RK_params). In this folder, train.py is adapted so that it supports multiple miscibility gaps in OCV profile. Graphite OCV data from https://iopscience.iop.org/article/10.1149/2.015301jes, Figure 2. Data digitized by WebPlotDigitizer https://automeris.io/WebPlotDigitizer/. 
 
 
-
 LixFeSiO4: containing the diffthermo model which learns the discharging OCV curve of LixFeSiO4 with 6 RK params (see LixFeSO4/6_RK_params). Data is from https://www.nature.com/articles/nmat2730, Figure 1a. Data digitized by WebPlotDigitizer https://automeris.io/WebPlotDigitizer/. 
 
 
@@ -41,5 +40,7 @@ Si: ontaining the diffthermo model which learns the discharging OCV curve of Si 
 Data from https://pubs.rsc.org/en/content/articlelanding/2018/RA/C7RA13489D
 
 
+
+pybamm_OCV_functions: contains all the 12 fitted OCV functions, implemented in PyBamm.
 
 

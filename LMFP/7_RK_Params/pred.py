@@ -503,6 +503,12 @@ while loss > 0.0001 and epoch < 0:
         # No boundary find.
         phase_boundary_fixed_point = []
     # print("Refinement ",phase_boundary_fixed_point) # AMYAO DEBUG
+
+    # # print(phase_boundary_fixed_point)
+    # for i in range(0, len(phase_boundary_fixed_point)):
+    #     print("%.16f  %.16f" %(phase_boundary_fixed_point[i][0], phase_boundary_fixed_point[i][1]))
+    # exit()
+
     loss_collocation = alpha_collocation * collocation_loss_all_pts(mu, x, phase_boundary_fixed_point, GibbsFE, params_list, alpha_miscibility, T=300)
     # backprop
     loss = loss_collocation*1.0
@@ -550,6 +556,9 @@ while loss > 0.0001 and epoch < 0:
                 x_alpha = phase_boundary_fixed_point[index][0]
                 x_beta = phase_boundary_fixed_point[index][1]
                 ct_pred = (GibbsFE(x_alpha, params_list, T=300) - GibbsFE(x_beta, params_list, T=300))/(x_alpha - x_beta) 
+                
+                # print("%.5f, %.4f, %.4f" %(ct_pred, x_alpha, x_beta))
+
                 if torch.isnan(ct_pred) == False:
                     mu_pred_after_ct.append(ct_pred.clone().detach().numpy()[0]) 
                 else:

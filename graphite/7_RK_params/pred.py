@@ -468,6 +468,13 @@ while epoch < 0:
         # No boundary find.
         phase_boundary_fixed_point = []
 
+
+    ## print(phase_boundary_fixed_point)
+    # for i in range(0, len(phase_boundary_fixed_point)):
+    #     print("%.16f  %.16f" %(phase_boundary_fixed_point[i][0], phase_boundary_fixed_point[i][1]))
+    # exit()
+
+
     # # draw the fitted results
     # x = np.arange(0, 1001)/1000
     # x = torch.from_numpy(x.astype("float32"))
@@ -513,6 +520,9 @@ while epoch < 0:
             x_alpha = phase_boundary_fixed_point[index][0]
             x_beta = phase_boundary_fixed_point[index][1]
             ct_pred = (GibbsFE(x_alpha, params_list, T=300) - GibbsFE(x_beta, params_list, T=300))/(x_alpha - x_beta) 
+            
+            # print("%.5f, %.4f, %.4f" %(ct_pred, x_alpha, x_beta))
+            
             if torch.isnan(ct_pred) == False:
                 mu_pred_after_ct.append(ct_pred.clone().detach().numpy()[0]) 
             else:
