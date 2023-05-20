@@ -3,6 +3,9 @@
 This github repo contains all source code & run results for the paper "Thermodynamically-Consistent Open-Circuit Voltage Models Using Differentiable Thermodynamics".
 
 
+src: source code for the diffthermo model
+
+
 LFP: containing the diffthermo model (referred to as "This work" in Figure 2), which learns the discharging OCV curve of LFP with only 4 RK params. The diffthermo model is locaed in the subfolder Discharge_4_RK_params/. Discharge_NMat_Fig2a_even_distribution.csv contains the digitized LFP data. Data is from https://www.nature.com/articles/nmat2730, Figure 2a. Data digitized by WebPlotDigitizer https://automeris.io/WebPlotDigitizer/. 
 
 
