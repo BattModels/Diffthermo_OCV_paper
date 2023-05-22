@@ -16,6 +16,8 @@ mpl.rc('font',family='Arial')
 # define canvas
 fig, ax = plt.subplots(4, 3, figsize=(22.5, 30))
 
+is_draw_error = False
+
 # LFP, true OCV
 os.chdir("LFP/Discharge_4_RK_params")
 df_discharge = pd.read_csv("Discharge_NMat_Fig2a_even_distribution.csv",header=None)
@@ -30,21 +32,25 @@ OCV_diffthermo_LFP = data['y']
 os.chdir(working_dir)
 # draw
 ax_now = ax[0][0]
-ax_now.plot(SOC_true_LFP, OCV_true_LFP, "k-", label="Experimental Value")
-ax_now.plot(SOC_diffthermo_LFP, OCV_diffthermo_LFP, "b--", label="This Work")
+ax_now.plot(SOC_true_LFP, OCV_true_LFP, "k-", label="Experimental Value", linewidth=3)
+ax_now.plot(SOC_diffthermo_LFP, OCV_diffthermo_LFP, "b--", label="This Work", linewidth=3)
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
-ax_now.set_ylim([2.45, 4.2])
+ax_now.set_ylim([2.65, 4.3])
 ax_now.set_xlim([0.0, 1.0])
-ax_now.legend(fontsize=16)
+ax_now.legend(fontsize=16, frameon=False)
 ax_now.set_title('LFP, 4 RK Parameters',fontsize=20)
 ax_now.tick_params(axis='both', which='major', labelsize=20)  
 ax_now.locator_params(axis='both', nbins=5)
+for axis in ['top','bottom','left','right']:
+    ax_now.spines[axis].set_linewidth(3)
+ax_now.tick_params(width=3)
+
 
 
 
 # graphite, true OCV
-os.chdir("graphite/7_RK_params")
+os.chdir("graphite/8_RK_params")
 df = pd.read_csv("graphite.csv",header=None)
 data = df.to_numpy()
 SOC_true_graphite = data[:,0]
@@ -56,17 +62,19 @@ OCV_diffthermo_graphite = data['y']
 os.chdir(working_dir)
 # draw
 ax_now = ax[0][1]
-ax_now.plot(SOC_true_graphite, OCV_true_graphite, "k-", label="Experimental Value")
-ax_now.plot(SOC_diffthermo_graphite, OCV_diffthermo_graphite, "b--", label="This Work")
+ax_now.plot(SOC_true_graphite, OCV_true_graphite, "k-", label="Experimental Value", linewidth=3)
+ax_now.plot(SOC_diffthermo_graphite, OCV_diffthermo_graphite, "b--", label="This Work", linewidth=3)
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
 ax_now.set_ylim([0.0, 0.65])
 ax_now.set_xlim([0.0, 1.0])
-ax_now.legend(fontsize=16)
+ax_now.legend(fontsize=16, frameon=False)
 ax_now.set_title('Graphite, 7 RK Parameters',fontsize=20)
 ax_now.tick_params(axis='both', which='major', labelsize=20)  
 ax_now.locator_params(axis='both', nbins=5)
-
+for axis in ['top','bottom','left','right']:
+    ax_now.spines[axis].set_linewidth(3)
+ax_now.tick_params(width=3)
 
 
 # LixFeSiO4, true OCV
@@ -82,17 +90,19 @@ OCV_diffthermo_LixFeSiO4 = data['y']
 os.chdir(working_dir)
 # draw
 ax_now = ax[0][2]
-ax_now.plot(SOC_true_LixFeSiO4, OCV_true_LixFeSiO4, "k-", label="Experimental Value")
-ax_now.plot(SOC_diffthermo_LixFeSiO4, OCV_diffthermo_LixFeSiO4, "b--", label="This Work")
+ax_now.plot(SOC_true_LixFeSiO4, OCV_true_LixFeSiO4, "k-", label="Experimental Value", linewidth=3)
+ax_now.plot(SOC_diffthermo_LixFeSiO4, OCV_diffthermo_LixFeSiO4, "b--", label="This Work", linewidth=3)
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
-ax_now.set_ylim([2.17, 3.85])
+ax_now.set_ylim([2.17, 3.95])
 ax_now.set_xlim([0.2, 1.0])
-ax_now.legend(fontsize=16)
+ax_now.legend(fontsize=16, frameon=False)
 ax_now.set_title('Li$_{x}$FeSiO$_{4}$, 6 RK Parameters',fontsize=20)
 ax_now.tick_params(axis='both', which='major', labelsize=20)  
 ax_now.locator_params(axis='both', nbins=5)
-
+for axis in ['top','bottom','left','right']:
+    ax_now.spines[axis].set_linewidth(3)
+ax_now.tick_params(width=3)
 
 
 # LCO, true OCV
@@ -108,17 +118,19 @@ OCV_diffthermo_LCO = data['y']
 os.chdir(working_dir)
 # draw
 ax_now = ax[1][0]
-ax_now.plot(SOC_true_LCO, OCV_true_LCO, "k-", label="Experimental Value")
-ax_now.plot(SOC_diffthermo_LCO, OCV_diffthermo_LCO, "b--", label="This Work")
+ax_now.plot(SOC_true_LCO, OCV_true_LCO, "k-", label="Experimental Value", linewidth=3)
+ax_now.plot(SOC_diffthermo_LCO, OCV_diffthermo_LCO, "b--", label="This Work", linewidth=3)
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
 ax_now.set_ylim([2.9, 4.8])
 ax_now.set_xlim([0.15, 1.0])
-ax_now.legend(fontsize=16)
+ax_now.legend(fontsize=16, frameon=False)
 ax_now.set_title('LCO, 8 RK Parameters',fontsize=20)
 ax_now.tick_params(axis='both', which='major', labelsize=20)  
 ax_now.locator_params(axis='both', nbins=5)
-
+for axis in ['top','bottom','left','right']:
+    ax_now.spines[axis].set_linewidth(3)
+ax_now.tick_params(width=3)
 
 
 # LMP, true OCV
@@ -134,17 +146,19 @@ OCV_diffthermo_LMP = data['y']
 os.chdir(working_dir)
 # draw
 ax_now = ax[1][1]
-ax_now.plot(SOC_true_LMP, OCV_true_LMP, "k-", label="Experimental Value")
-ax_now.plot(SOC_diffthermo_LMP, OCV_diffthermo_LMP, "b--", label="This Work")
+ax_now.plot(SOC_true_LMP, OCV_true_LMP, "k-", label="Experimental Value", linewidth=3)
+ax_now.plot(SOC_diffthermo_LMP, OCV_diffthermo_LMP, "b--", label="This Work", linewidth=3)
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
 ax_now.set_ylim([2.2, 4.7])
 ax_now.set_xlim([0.0, 1.0])
-ax_now.legend(fontsize=16)
+ax_now.legend(fontsize=16, frameon=False)
 ax_now.set_title('LMP, 5 RK Parameters',fontsize=20)
 ax_now.tick_params(axis='both', which='major', labelsize=20)  
 ax_now.locator_params(axis='both', nbins=5)
-
+for axis in ['top','bottom','left','right']:
+    ax_now.spines[axis].set_linewidth(3)
+ax_now.tick_params(width=3)
 
 
 # LMFP, true OCV
@@ -160,16 +174,19 @@ OCV_diffthermo_LMFP = data['y']
 os.chdir(working_dir)
 # draw
 ax_now = ax[1][2]
-ax_now.plot(SOC_true_LMFP, OCV_true_LMFP, "k-", label="Experimental Value")
-ax_now.plot(SOC_diffthermo_LMFP, OCV_diffthermo_LMFP, "b--", label="This Work")
+ax_now.plot(SOC_true_LMFP, OCV_true_LMFP, "k-", label="Experimental Value", linewidth=3)
+ax_now.plot(SOC_diffthermo_LMFP, OCV_diffthermo_LMFP, "b--", label="This Work", linewidth=3)
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
-ax_now.set_ylim([2.0, 4.2])
+ax_now.set_ylim([2.0, 4.4])
 ax_now.set_xlim([0.0, 1.0])
-ax_now.legend(fontsize=16)
+ax_now.legend(fontsize=16, frameon=False)
 ax_now.set_title('LiMn$_{0.5}$Fe$_{0.5}$PO$_{4}$, 7 RK Parameters',fontsize=20)
 ax_now.tick_params(axis='both', which='major', labelsize=20)  
 ax_now.locator_params(axis='both', nbins=5)
+for axis in ['top','bottom','left','right']:
+    ax_now.spines[axis].set_linewidth(3)
+ax_now.tick_params(width=3)
 
 
 # LTO, true OCV
@@ -182,27 +199,26 @@ OCV_true_LTO = data[:,1]
 data=np.load("RK_diffthermo.npz")
 SOC_diffthermo_LTO = data['x']
 OCV_diffthermo_LTO = data['y']
-# print(SOC_true_LTO, OCV_true_LTO) # AMYAO DEBUG
-# print("******")
-# print(SOC_diffthermo_LTO, OCV_diffthermo_LTO) # AMYAO DEBUG
-# exit()
 os.chdir(working_dir)
 # draw
 ax_now = ax[2][0]
-ax_now.plot(SOC_true_LTO, OCV_true_LTO, "k-", label="Experimental Value")
-ax_now.plot(SOC_diffthermo_LTO, OCV_diffthermo_LTO, "b--", label="This Work")
+ax_now.plot(SOC_true_LTO, OCV_true_LTO, "k-", label="Experimental Value", linewidth=3)
+ax_now.plot(SOC_diffthermo_LTO, OCV_diffthermo_LTO, "b--", label="This Work", linewidth=3)
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
-ax_now.set_ylim([0.7, 2.6])
+ax_now.set_ylim([0.7, 2.74])
 ax_now.set_xlim([0.0, 1.0])
-ax_now.legend(fontsize=16)
+ax_now.legend(fontsize=16, frameon=False)
 ax_now.set_title('Li$_{4/3}$Ti$_{5/3}$O$_{4}$, 4 RK Parameters',fontsize=20)
 ax_now.tick_params(axis='both', which='major', labelsize=20)  
 ax_now.locator_params(axis='both', nbins=5)
+for axis in ['top','bottom','left','right']:
+    ax_now.spines[axis].set_linewidth(3)
+ax_now.tick_params(width=3)
 
 
 # Si, true OCV
-os.chdir("Si/6_RK_params")
+os.chdir("Si/7_RK_params")
 df = pd.read_csv("Si.csv",header=None)
 data = df.to_numpy()
 SOC_true_Si = data[:,0]/3600 # theoretical capacity of Si
@@ -214,16 +230,19 @@ OCV_diffthermo_Si = data['y']
 os.chdir(working_dir)
 # draw
 ax_now = ax[2][1]
-ax_now.plot(SOC_true_Si, OCV_true_Si, "k-", label="Experimental Value")
-ax_now.plot(SOC_diffthermo_Si, OCV_diffthermo_Si, "b--", label="This Work")
+ax_now.plot(SOC_true_Si, OCV_true_Si, "k-", label="Experimental Value", linewidth=3)
+ax_now.plot(SOC_diffthermo_Si, OCV_diffthermo_Si, "b--", label="This Work", linewidth=3)
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
-ax_now.set_ylim([0.0, 0.8])
+ax_now.set_ylim([0.0, 0.74])
 ax_now.set_xlim([0.0, 1.0])
-ax_now.legend(fontsize=16)
-ax_now.set_title('Si, 6 RK Parameters',fontsize=20)
+ax_now.legend(fontsize=16, frameon=False)
+ax_now.set_title('Si, 7 RK Parameters',fontsize=20)
 ax_now.tick_params(axis='both', which='major', labelsize=20)  
 ax_now.locator_params(axis='both', nbins=5)
+for axis in ['top','bottom','left','right']:
+    ax_now.spines[axis].set_linewidth(3)
+ax_now.tick_params(width=3)
 
 
 # LMO, true OCV
@@ -239,16 +258,19 @@ OCV_diffthermo_LMO = data['y']
 os.chdir(working_dir)
 # draw
 ax_now = ax[2][2]
-ax_now.plot(SOC_true_LMO, OCV_true_LMO, "k-", label="Experimental Value")
-ax_now.plot(SOC_diffthermo_LMO, OCV_diffthermo_LMO, "b--", label="This Work")
+ax_now.plot(SOC_true_LMO, OCV_true_LMO, "k-", label="Experimental Value", linewidth=3)
+ax_now.plot(SOC_diffthermo_LMO, OCV_diffthermo_LMO, "b--", label="This Work", linewidth=3)
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
-ax_now.set_ylim([3.38, 4.24])
+ax_now.set_ylim([3.38, 4.34])
 ax_now.set_xlim([0.15 ,1.0])
-ax_now.legend(fontsize=16)
+ax_now.legend(fontsize=16, frameon=False)
 ax_now.set_title('LMO, 5 RK Parameters',fontsize=20)
 ax_now.tick_params(axis='both', which='major', labelsize=20)  
 ax_now.locator_params(axis='both', nbins=5)
+for axis in ['top','bottom','left','right']:
+    ax_now.spines[axis].set_linewidth(3)
+ax_now.tick_params(width=3)
 
 
 # NCA, true OCV
@@ -264,17 +286,19 @@ OCV_diffthermo_NCA = data['y']
 os.chdir(working_dir)
 # draw
 ax_now = ax[3][0]
-ax_now.plot(SOC_true_NCA, OCV_true_NCA, "k-", label="Experimental Value")
-ax_now.plot(SOC_diffthermo_NCA, OCV_diffthermo_NCA, "b--", label="This Work")
+ax_now.plot(SOC_true_NCA, OCV_true_NCA, "k-", label="Experimental Value", linewidth=3)
+ax_now.plot(SOC_diffthermo_NCA, OCV_diffthermo_NCA, "b--", label="This Work", linewidth=3)
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
 ax_now.set_ylim([2.9, 4.4])
 ax_now.set_xlim([0.3, 1.0])
-ax_now.legend(fontsize=16)
+ax_now.legend(fontsize=16, frameon=False)
 ax_now.set_title('NCA, 6 RK Parameters',fontsize=20)
 ax_now.tick_params(axis='both', which='major', labelsize=20)  
 ax_now.locator_params(axis='both', nbins=5)
-
+for axis in ['top','bottom','left','right']:
+    ax_now.spines[axis].set_linewidth(3)
+ax_now.tick_params(width=3)
 
 
 # NCO, true OCV
@@ -290,17 +314,19 @@ OCV_diffthermo_NCO = data['y']
 os.chdir(working_dir)
 # draw
 ax_now = ax[3][1]
-ax_now.plot(SOC_true_NCO, OCV_true_NCO, "k-", label="Experimental Value")
-ax_now.plot(SOC_diffthermo_NCO, OCV_diffthermo_NCO, "b--", label="This Work")
+ax_now.plot(SOC_true_NCO, OCV_true_NCO, "k-", label="Experimental Value", linewidth=3)
+ax_now.plot(SOC_diffthermo_NCO, OCV_diffthermo_NCO, "b--", label="This Work", linewidth=3)
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
-ax_now.set_ylim([3.3, 4.7])
+ax_now.set_ylim([3.3, 4.8])
 ax_now.set_xlim([0.0, 1.0])
-ax_now.legend(fontsize=16)
+ax_now.legend(fontsize=16, frameon=False)
 ax_now.set_title('NCO, 6 RK Parameters',fontsize=20)
 ax_now.tick_params(axis='both', which='major', labelsize=20)  
 ax_now.locator_params(axis='both', nbins=5)
-
+for axis in ['top','bottom','left','right']:
+    ax_now.spines[axis].set_linewidth(3)
+ax_now.tick_params(width=3)
 
 
 # NMC, true OCV
@@ -316,17 +342,19 @@ OCV_diffthermo_NMC = data['y']
 os.chdir(working_dir)
 # draw
 ax_now = ax[3][2]
-ax_now.plot(SOC_true_NMC, OCV_true_NMC, "k-", label="Experimental Value")
-ax_now.plot(SOC_diffthermo_NMC, OCV_diffthermo_NMC, "b--", label="This Work")
+ax_now.plot(SOC_true_NMC, OCV_true_NMC, "k-", label="Experimental Value", linewidth=3)
+ax_now.plot(SOC_diffthermo_NMC, OCV_diffthermo_NMC, "b--", label="This Work", linewidth=3)
 ax_now.set_xlabel("SOC", fontsize=20)
 ax_now.set_ylabel("OCV (V)", fontsize=20)
 ax_now.set_ylim([3.51, 4.42])
 ax_now.set_xlim([0.2, 1.0])
-ax_now.legend(fontsize=16)
+ax_now.legend(fontsize=16, frameon=False)
 ax_now.set_title('NMC, 6 RK Parameters',fontsize=20)
 ax_now.tick_params(axis='both', which='major', labelsize=20)  
 ax_now.locator_params(axis='both', nbins=5)
-
+for axis in ['top','bottom','left','right']:
+    ax_now.spines[axis].set_linewidth(3)
+ax_now.tick_params(width=3)
 
 
 plt.savefig('Figure_raw.png', dpi=200, bbox_inches='tight') 

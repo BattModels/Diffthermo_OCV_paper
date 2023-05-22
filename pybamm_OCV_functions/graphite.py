@@ -10,26 +10,28 @@ def graphite_OCP(sto):
     """
     _eps = 1e-7
     # rk params
-    G0 = -12254.9414 
-    Omega0 = -2368.2908 
-    Omega1 = -4401.7715 
-    Omega2 = 13879.9395 
-    Omega3 = -52430.7227 
-    Omega4 = -43530.1719 
-    Omega5 = 139934.6719 
-    Omega6 = 19018.1602 
-    Omega7 = -118288.8906 
-    Omegas = [Omega0, Omega1, Omega2, Omega3, Omega4, Omega5, Omega6, Omega7]
+    Omega0 = -3809.5845 
+    Omega1 = -4032.4138 
+    Omega2 = 6000.8306 
+    Omega3 = -11625.2646 
+    Omega4 = -62671.4648 
+    Omega5 = 25442.2031 
+    Omega6 = 116366.1172 
+    Omega7 = -26409.8652 
+    Omega8 = -90384.7344 
+    G0 = -11595.3965 
+
+    Omegas = [Omega0, Omega1, Omega2, Omega3, Omega4, Omega5, Omega6, Omega7, Omega8]
 
     # phase boudary 0
-    x_alpha_0 = 0.5450866818428040  
-    x_beta_0 = 0.9030561447143555
+    x_alpha_0 = 0.5630063414573669  
+    x_beta_0 = 0.8214209079742432
     mu_coex_0 = -7666.44336 # phase coexistence chemical potential
     is_outside_miscibility_gap_0 = (sto<x_alpha_0) + (sto>x_beta_0)
     # phase boudary 1
-    x_alpha_1 = 0.2775516510009766  
-    x_beta_1 = 0.4738220572471619 
-    mu_coex_1 = -10955.86426 # phase coexistence chemical potential
+    x_alpha_1 = 0.2831532061100006  
+    x_beta_1 = 0.4294382333755493
+    mu_coex_1 = -7810.95215 # phase coexistence chemical potential
     is_outside_miscibility_gap_1 = (sto<x_alpha_1) + (sto>x_beta_1)
 
     # whether is outside all gap

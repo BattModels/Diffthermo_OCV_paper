@@ -12,11 +12,6 @@ global is_print , _eps
 is_print = False
 _eps = 1e-7
 
-try:
-    os.mkdir("records")
-except:
-    pass
-
 
 """
 The basic theory behind:
@@ -423,18 +418,16 @@ x = torch.from_numpy(x)
 mu = mu.astype("float32")
 mu = torch.from_numpy(mu)
 
-G0_start = -11596.1348  
-Omega0_start = -3807.1062 
-Omega1_start = -4031.0952 
-Omega2_start = 5978.5483 
-Omega3_start = -11651.1211 
-Omega4_start = -62517.7344 
-Omega5_start = 25508.9219 
-Omega6_start = 116063.9922 
-Omega7_start = -26471.6133 
-Omega8_start = -90184.9141 
-   
-
+Omega0_start = -3809.5845 
+Omega1_start = -4032.4138 
+Omega2_start = 6000.8306 
+Omega3_start = -11625.2646 
+Omega4_start = -62671.4648 
+Omega5_start = 25442.2031 
+Omega6_start = 116366.1172 
+Omega7_start = -26409.8652 
+Omega8_start = -90384.7344 
+G0_start = -11595.3965       
 G0 = nn.Parameter( torch.from_numpy(np.array([G0_start],dtype="float32")) ) 
 Omega0 = nn.Parameter( torch.from_numpy(np.array([Omega0_start],dtype="float32")) ) 
 Omega1 = nn.Parameter( torch.from_numpy(np.array([Omega1_start],dtype="float32")) ) 
@@ -449,16 +442,8 @@ Omega8 = nn.Parameter( torch.from_numpy(np.array([Omega8_start],dtype="float32")
 # params_list = [Omega0, Omega1, Omega2, Omega3, G0] 
 params_list = [Omega0, Omega1, Omega2, Omega3, Omega4, Omega5, Omega6, Omega7, Omega8, G0] 
 
-# train
-params_record = []
-for i in range(0, len(params_list)):
-    params_record.append([])
-epoch_record = []
-# total_epochs = 1000
-# for epoch in range(0, total_epochs):
-loss = 9999.9 # init total loss
 epoch = -1
-while loss > 0.0001 and epoch < 0:
+while epoch < 0:
     # clean grad info
     # use current params to calculate predicted phase boundary
     epoch = epoch + 1
@@ -485,19 +470,29 @@ while loss > 0.0001 and epoch < 0:
         phase_boundary_fixed_point = []
 
 
+    # # print(phase_boundary_fixed_point)
+    # for i in range(0, len(phase_boundary_fixed_point)):
+    #     print("%.16f  %.16f" %(phase_boundary_fixed_point[i][0], phase_boundary_fixed_point[i][1]))
+    # exit()
+
+
     # # draw the fitted results
-    x = np.arange(0, 1001)/1000
-    x = torch.from_numpy(x.astype("float32"))
+    # x = np.arange(0, 1001)/1000
+    # x = torch.from_numpy(x.astype("float32"))
     mu_pred = []
+    dmu_dx = [] # i.e. dVdQ, differential voltage analysis, also helps check monotonicity
     for i in range(0, len(x)):
+
         x_now = x[i]
         x_now = x_now.requires_grad_()
         g_now = GibbsFE(x_now, params_list, T=300)
         mu_pred_now = autograd.grad(outputs=g_now, inputs=x_now, create_graph=True)[0]
+        dmu_dx_pred_now = autograd.grad(outputs=mu_pred_now, inputs=x_now, create_graph=True)[0]
         mu_pred.append(mu_pred_now.detach().numpy())
+        dmu_dx.append(dmu_dx_pred_now.detach().numpy())
     mu_pred = np.array(mu_pred)
+    dmu_dx = np.array(dmu_dx)
     SOC = x.clone().numpy()
-
 
     # plot figure
     plt.figure(figsize=(5,4))
@@ -508,6 +503,7 @@ while loss > 0.0001 and epoch < 0:
 
     # plot the one after common tangent construction
     mu_pred_after_ct = []
+    dmu_dx_after_ct = []
     # see if x is inside any gaps
     def _is_inside_gaps(_x, _gaps_list):
         _is_inside = False
@@ -525,21 +521,30 @@ while loss > 0.0001 and epoch < 0:
         if is_inside == False:
             # outside miscibility gap 
             mu_pred_after_ct.append(mu_pred[i])
+            dmu_dx_after_ct.append(dmu_dx[i])
         else: 
             # inside miscibility gap
             x_alpha = phase_boundary_fixed_point[index][0]
             x_beta = phase_boundary_fixed_point[index][1]
             ct_pred = (GibbsFE(x_alpha, params_list, T=300) - GibbsFE(x_beta, params_list, T=300))/(x_alpha - x_beta) 
+            dmu_dx_after_ct.append(0.0)
+
+            # print("%.5f, %.4f, %.4f" %(ct_pred, x_alpha, x_beta))
+            
             if torch.isnan(ct_pred) == False:
                 mu_pred_after_ct.append(ct_pred.clone().detach().numpy()[0]) 
             else:
                 mu_pred_after_ct.append(mu_pred[i])
     mu_pred_after_ct = np.array(mu_pred_after_ct)
+    dmu_dx_after_ct = np.array(dmu_dx_after_ct)
     U_pred_after_ct = mu_pred_after_ct/(-96485)
     plt.plot(SOC, U_pred_after_ct, 'r-', label="Prediction After CT Construction")
+    np.savez("RK_diffthermo.npz", x=SOC, y=U_pred_after_ct) # can be load as data=np.load("RK_diffthermo.npz"), SOC = data['x'], OCV_pred_RK = data['y']
+
 
     U_true_value = mu.numpy()/(-96485) # plot the true value
     plt.plot(x_true, U_true_value, 'b-', label="True OCV")
+
 
     plt.xlim([0,1])
     plt.ylim([0.0, 0.6])
@@ -547,7 +552,22 @@ while loss > 0.0001 and epoch < 0:
     plt.xlabel("SOC")
     plt.ylabel("OCV")
     fig_name = "Pred.png"
-    # plt.show()
+    plt.show()
+    # plt.savefig(fig_name, bbox_inches='tight')
+    plt.close()
+
+
+    # dVdQ, i.e. dOCV/dx curve
+    plt.figure(figsize=(5,4))
+    # dU_dx_before_ct = -dmu_dx/(-96485)
+    dU_dx_after_ct = -dmu_dx_after_ct/(-96485)
+    # plt.plot(SOC, dU_dx_before_ct, 'k--', label="dVdQ before CT")
+    plt.plot(SOC, dU_dx_after_ct, 'r-', label="dVdQ after CT")
+    plt.xlim([0,1])
+    plt.legend()
+    plt.xlabel("SOC")
+    plt.ylabel("dU/dx (V/mole fraction)")
+    fig_name = "dVdQ.png" 
     plt.savefig(fig_name, bbox_inches='tight')
     plt.close()
 

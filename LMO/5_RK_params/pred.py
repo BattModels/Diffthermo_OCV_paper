@@ -507,14 +507,17 @@ while loss > 0.0001 and epoch < 0:
     if epoch % 100 == 0:
         # # draw the fitted results
         mu_pred = []
+        dmu_dx = [] # i.e. dVdQ, differential voltage analysis, also helps check monotonicity
         for i in range(0, len(x)):
             x_now = x[i]
-            mu_now = mu[i]
             x_now = x_now.requires_grad_()
             g_now = GibbsFE(x_now, params_list, T=300)
             mu_pred_now = autograd.grad(outputs=g_now, inputs=x_now, create_graph=True)[0]
+            dmu_dx_pred_now = autograd.grad(outputs=mu_pred_now, inputs=x_now, create_graph=True)[0]
             mu_pred.append(mu_pred_now.detach().numpy())
+            dmu_dx.append(dmu_dx_pred_now.detach().numpy())
         mu_pred = np.array(mu_pred)
+        dmu_dx = np.array(dmu_dx)
         SOC = x.clone().numpy()
         # plot figure
         plt.figure(figsize=(5,4))
@@ -523,6 +526,7 @@ while loss > 0.0001 and epoch < 0:
         plt.plot(SOC, U_pred_before_ct, 'k--', label="Prediction Before CT Construction")
         # plot the one after common tangent construction
         mu_pred_after_ct = []
+        dmu_dx_after_ct = []
         # see if x is inside any gaps
         def _is_inside_gaps(_x, _gaps_list):
             _is_inside = False
@@ -541,45 +545,46 @@ while loss > 0.0001 and epoch < 0:
             if is_inside == False:
                 # outside miscibility gap 
                 mu_pred_after_ct.append(mu_pred[i])
+                dmu_dx_after_ct.append(dmu_dx[i])
             else: 
                 # inside miscibility gap
                 x_alpha = phase_boundary_fixed_point[index][0]
                 x_beta = phase_boundary_fixed_point[index][1]
                 ct_pred = (GibbsFE(x_alpha, params_list, T=300) - GibbsFE(x_beta, params_list, T=300))/(x_alpha - x_beta) 
+                dmu_dx_after_ct.append(0.0)
+
+                # print("%.5f, %.4f, %.4f" %(ct_pred, x_alpha, x_beta))
+
                 if torch.isnan(ct_pred) == False:
                     mu_pred_after_ct.append(ct_pred.clone().detach().numpy()[0]) 
                 else:
                     mu_pred_after_ct.append(mu_pred[i])
         mu_pred_after_ct = np.array(mu_pred_after_ct)
+        dmu_dx_after_ct = np.array(dmu_dx_after_ct)
         U_pred_after_ct = mu_pred_after_ct/(-96485)
         plt.plot(SOC, U_pred_after_ct, 'r-', label="Prediction After CT Construction")
         U_true_value = mu.numpy()/(-96485) # plot the true value
         plt.plot(SOC, U_true_value, 'b-', label="True OCV")
+        plt.xlim([0,1])
+        plt.ylim([2.0, 5.0])
+        plt.legend()
         np.savez("RK_diffthermo.npz", x=SOC, y=U_pred_after_ct) # can be load as data=np.load("RK_diffthermo.npz"), SOC = data['x'], OCV_pred_RK = data['y']
+
+        # dVdQ, i.e. dOCV/dx curve
+        plt.figure(figsize=(5,4))
+        # dU_dx_before_ct = -dmu_dx/(-96485)
+        dU_dx_after_ct = -dmu_dx_after_ct/(-96485)
+        # plt.plot(SOC, dU_dx_before_ct, 'k--', label="dVdQ before CT")
+        plt.plot(SOC, dU_dx_after_ct, 'r-', label="dVdQ after CT")
+        plt.xlim([0,1])
+        plt.legend()
+        plt.xlabel("SOC")
+        plt.ylabel("dU/dx (V/mole fraction)")
+        fig_name = "dVdQ.png" 
+        # plt.show()
+        plt.savefig(fig_name, bbox_inches='tight')
+        plt.close()
+        
 
 
 print("Training Complete.\n")
-
-# # # plot Gibbs free energy landscape
-# mu_pred = []
-# g_pred = []
-# ngrid = 99
-# x_pred = torch.from_numpy( np.linspace(1/(ngrid+1),1-1/(ngrid+1),ngrid) )
-# for i in range(0, len(x_pred)):
-#     x_now = x_pred[i]
-#     mu_now = mu[i]
-#     x_now = x_now.requires_grad_()
-#     g_now = GibbsFE(x_now, params_list, T=300)
-#     g_pred.append(g_now.detach().numpy())
-#     mu_pred_now = autograd.grad(outputs=g_now, inputs=x_now, create_graph=True)[0]
-#     mu_pred.append(mu_pred_now.detach().numpy())
-# mu_pred = np.array(mu_pred)
-# x_pred = 1.0 - x_pred.numpy()
-# g_pred = np.array(g_pred)
-# plt.figure(figsize=(5,4))
-# plt.plot(x_pred, g_pred, label="pred")
-# plt.xlim([0,1])
-# plt.legend()
-# plt.savefig("Final_g.png", bbox_inches='tight')
-# plt.close()
-exit()

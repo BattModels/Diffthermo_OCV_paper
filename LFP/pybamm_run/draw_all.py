@@ -7,7 +7,7 @@ mpl.rc('font',family='Arial')
 
 
 # no error plot
-fig, ax = plt.subplots(2, 2, figsize=(12, 11))
+fig, ax = plt.subplots(2, 2, figsize=(13.5, 11))
 c_rates = [0.05, 0.5, 1.0, 2.0] 
 c_rates_label = ["C/20", "C/2", "1C", "2C"]
 filenames = ["LFP_25degC_Co20.csv", "LFP_25degC_Co2.csv", "LFP_25degC_1C.csv", "LFP_25degC_2C.csv"]
@@ -43,16 +43,19 @@ for i in range(0, len(c_rates)):
     temperature = 25
     indices = ax_i_j[i]
     ax_now = ax[indices[0]][indices[1]]
-    ax_now.plot(voltage_data[:, 0], voltage_data[:, 1], "k-", label=f"Experiment, {c_rates_label[i]}")
-    ax_now.plot(t, V, "b--", label=f"PyBamm Simulation, {c_rates_label[i]}")
+    ax_now.plot(voltage_data[:, 0], voltage_data[:, 1], "k-", label=f"Experiment, {c_rates_label[i]}", linewidth=3)
+    ax_now.plot(t, V, "b--", label=f"PyBamm Simulation, {c_rates_label[i]}", linewidth=3)
     # ax_now.plot(t_a, V_a, "r--", label=f"AboutEnergy, {c_rates_label[i]}")
     ax_now.set_xlabel("Time (s)", fontsize=20)
     ax_now.set_ylabel("Voltage (V)", fontsize=20)
     ax_now.set_ylim([1.9, 3.8])
     ax_now.set_xlim([-t.max()/100, t.max()*1.01])
-    ax_now.legend(fontsize=16)
+    ax_now.legend(fontsize=16, frameon=False)
     ax_now.tick_params(axis='both', which='major', labelsize=20)  
-plt.savefig('Figure3.png', dpi=200, bbox_inches='tight') 
+    for axis in ['top','bottom','left','right']:
+        ax_now.spines[axis].set_linewidth(3)
+    ax_now.tick_params(width=3)
+plt.savefig('Figure3_raw.png', dpi=200, bbox_inches='tight') 
 plt.close()
 
 # with error plot
