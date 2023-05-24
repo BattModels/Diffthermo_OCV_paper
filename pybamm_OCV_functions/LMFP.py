@@ -10,25 +10,27 @@ def LMFP_OCV(sto):
     """
     _eps = 1e-7
     # rk params
-    Omega0 = -107495.0625 
-    Omega1 = 26662.8164 
-    Omega2 = 25543.9824 
-    Omega3 = 47758.4688 
-    Omega4 = -199459.4688 
-    Omega5 = 299251.1875 
-    Omega6 = -163829.0781 
-    G0 = -315364.2500  
-    Omegas = [Omega0, Omega1, Omega2, Omega3, Omega4, Omega5, Omega6]
+    Omega0 = -145909.7344 
+    Omega1 = 74384.1953 
+    Omega2 = -110217.6562 
+    Omega3 = 283424.2500 
+    Omega4 = 4096.3789 
+    Omega5 = -488764.0000 
+    Omega6 = -118211.7422 
+    Omega7 = 876900.6875 
+    Omega8 = -463140.0000 
+    G0 = -296098.3438   
+    Omegas = [Omega0, Omega1, Omega2, Omega3, Omega4, Omega5, Omega6, Omega7, Omega8]
 
     # phase boudary 0
-    x_alpha_0 = 0.5021629333496094  
-    x_beta_0 = 0.8771189451217651
-    mu_coex_0 = -328099.15625 # phase coexistence chemical potential
+    x_alpha_0 = 0.5106148719787598  
+    x_beta_0 = 0.6389647722244263
+    mu_coex_0 = -332565.03125 # phase coexistence chemical potential
     is_outside_miscibility_gap_0 = (sto<x_alpha_0) + (sto>x_beta_0)
     # phase boudary 1
-    x_alpha_1 = 0.0451637208461761 
-    x_beta_1 = 0.1859853267669678
-    mu_coex_1 = -386181.37500  # phase coexistence chemical potential
+    x_alpha_1 = 0.7089425325393677  
+    x_beta_1 = 0.8747773170471191
+    mu_coex_1 = -323988.12500  # phase coexistence chemical potential
     is_outside_miscibility_gap_1 = (sto<x_alpha_1) + (sto>x_beta_1)
 
     # whether is outside all gap

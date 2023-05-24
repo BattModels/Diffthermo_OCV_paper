@@ -395,6 +395,13 @@ data = df.to_numpy()
 # Note that for LFP, the reaction during discharge is FP + Li = LFP, therefore the more Li you have in LFP, the lower the OCV will be, i.e. x = 1-SOC
 x = 1.0-data[:,0]/169.91 # i.e. Li concentration, divided by the theoretical capacity of LFP 
 mu = -data[:,1]*96485 # because -mu_e- = OCV*F, -OCV*F = mu
+
+# # AMYAO DEBUG
+# plt.figure(figsize=(5,4))
+# plt.plot(x, mu, 'k--')
+# plt.show()
+# exit()
+
 # convert to torch.tensor
 x = x.astype("float32")
 x = torch.from_numpy(x)
