@@ -529,7 +529,7 @@ while epoch < 0:
             ct_pred = (GibbsFE(x_alpha, params_list, T=300) - GibbsFE(x_beta, params_list, T=300))/(x_alpha - x_beta) 
             dmu_dx_after_ct.append(0.0)
 
-            # print("%.5f, %.4f, %.4f" %(ct_pred, x_alpha, x_beta))
+            print("%.5f, %.4f, %.4f" %(ct_pred, x_alpha, x_beta))
             
             if torch.isnan(ct_pred) == False:
                 mu_pred_after_ct.append(ct_pred.clone().detach().numpy()[0]) 

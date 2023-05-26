@@ -6,10 +6,10 @@ This github repo contains all source code & run results for the paper "Thermodyn
 src: source code for the diffthermo model. If you want to use the diffthermo model, please have a look at train.py in this folder, there are detailed instruction on how to modify train.py to fit your own dataset. 
 
 
-LFP: containing the diffthermo model (referred to as "This work" in Figure 2), which learns the discharging OCV curve of LFP with only 4 RK params. The diffthermo model is locaed in the subfolder Discharge_4_RK_params/. Discharge_NMat_Fig2a_even_distribution.csv contains the digitized LFP data. Data is from https://www.nature.com/articles/nmat2730, Figure 2a. Data digitized by WebPlotDigitizer https://automeris.io/WebPlotDigitizer/. 
+LFP: containing the diffthermo model (referred to as "This work" in Figure 2), which fits the discharging OCV curve of LFP with only 4 RK params. The diffthermo model is locaed in the subfolder Discharge_4_RK_params/. Discharge_NMat_Fig2a_even_distribution.csv contains the digitized LFP data. Data is from https://www.nature.com/articles/nmat2730, Figure 2a. Data digitized by WebPlotDigitizer https://automeris.io/WebPlotDigitizer/. 
 
 
-graphite: containing the diffthermo model which learns the discharging OCV curve of LFP with 8 RK params (see graphite/7_RK_params). In this folder, train.py is adapted so that it supports multiple miscibility gaps in OCV profile. Graphite OCV data from https://iopscience.iop.org/article/10.1149/2.015301jes, Figure 2. Data digitized by WebPlotDigitizer https://automeris.io/WebPlotDigitizer/. 
+graphite: containing the diffthermo model which learns the discharging OCV curve of LFP with 9 RK params (see graphite/8_RK_params, which actually has 9 RK parameters). In this folder, train.py is adapted so that it supports multiple miscibility gaps in OCV profile. Graphite OCV data from https://iopscience.iop.org/article/10.1149/2.015301jes, Figure 2. Data digitized by WebPlotDigitizer https://automeris.io/WebPlotDigitizer/. 
 
 
 LixFeSiO4: containing the diffthermo model which learns the discharging OCV curve of LixFeSiO4 with 6 RK params (see LixFeSO4/6_RK_params). Data is from https://www.nature.com/articles/nmat2730, Figure 1a. Data digitized by WebPlotDigitizer https://automeris.io/WebPlotDigitizer/. 

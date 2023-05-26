@@ -26,12 +26,12 @@ def graphite_OCP(sto):
     # phase boudary 0
     x_alpha_0 = 0.5630063414573669  
     x_beta_0 = 0.8214209079742432
-    mu_coex_0 = -7666.44336 # phase coexistence chemical potential
+    mu_coex_0 = -7810.95215 # phase coexistence chemical potential
     is_outside_miscibility_gap_0 = (sto<x_alpha_0) + (sto>x_beta_0)
     # phase boudary 1
     x_alpha_1 = 0.2831532061100006  
     x_beta_1 = 0.4294382333755493
-    mu_coex_1 = -7810.95215 # phase coexistence chemical potential
+    mu_coex_1 = -11124.01855 # phase coexistence chemical potential
     is_outside_miscibility_gap_1 = (sto<x_alpha_1) + (sto>x_beta_1)
 
     # whether is outside all gap
