@@ -20,7 +20,7 @@ def U_RK(x,*L):
     for i in range(0,n_RK):
         summation += L[i]*((1.-2.*x)**(i+1)-2.*i*x*(1.-x)*(1.-2.*x)**(i-1))
     s = R*T/F*np.log(x/(1.-x))
-    return summation + s # TODO BUG sign error????
+    return summation + s 
 
 
 # data from NMat Fig 2a, LFP
