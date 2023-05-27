@@ -66,7 +66,7 @@ def newton_raphson(func, x0, threshold=1e-6, in_backward_hood = False):
         f_now = g(x_now)
         J = autograd.functional.jacobian(g, x_now)
         f_now = torch.reshape(f_now, (2,1)) 
-        x_new = x_now - torch.reshape(torch.linalg.pinv(J)@f_now, (2,)) # TODO shall we use pinv?
+        x_new = x_now - torch.reshape(torch.linalg.pinv(J)@f_now, (2,)) 
         # detach for memory saving
         x_new = x_new.clone().detach() # detach for memory saving
         # clamp
@@ -127,7 +127,7 @@ def convex_hull(sample, ngrid=99, tolerance = _eps):
             h = base_working[i][0]; t = base_working[i][1] # h is the sample point at left side, t is the sample point at right side
             _n = torch.matmul(torch.from_numpy(np.array([[0.0,-1.0],[1.0,0.0]]).astype("float32")), torch.reshape((t[0:2]-h[0:2]), (2,1)))
             # limit to those having x value between the x value of h and t
-            left_id = torch.argmin(torch.abs(sample[:,0]-h[0])) + 1 # TODO is this implementation correct? Basically limiting the searching range within h and t
+            left_id = torch.argmin(torch.abs(sample[:,0]-h[0])) + 1 # limiting the searching range within h and t
             right_id = torch.argmin(torch.abs(sample[:,0]-t[0]))
             if left_id == right_id: # it means this piece of convex hull is the shortest piece possible
                 base_working_new.remove(base_working[i])
@@ -206,8 +206,8 @@ class FixedPointOperation(nn.Module):
         """x[0] is the left limit of phase coexisting region, x[1] is the right limit"""
         x_alpha = x[0]
         x_beta = x[1]
-        g_right = self.G(x_beta, params_list, self.T) 
-        g_left = self.G(x_alpha, params_list, self.T)
+        g_right = self.G(x_beta, self.params_list, self.T) 
+        g_left = self.G(x_alpha, self.params_list, self.T)
         mu_right = autograd.grad(outputs=g_right, inputs=x_beta, create_graph=True)[0]
         mu_left = autograd.grad(outputs=g_left, inputs=x_alpha, create_graph=True)[0]
         x_alpha_new = x_beta - (g_right - g_left)/(mu_left + _eps)
@@ -240,8 +240,8 @@ class FixedPointOperationForwardPass(nn.Module):
         x_beta_now = x[1]
         x_alpha_now = x_alpha_now.reshape(1)
         x_beta_now = x_beta_now.reshape(1)
-        g_left = self.G(x_alpha_now, params_list, self.T)
-        g_right = self.G(x_beta_now, params_list, self.T)
+        g_left = self.G(x_alpha_now, self.params_list, self.T)
+        g_right = self.G(x_beta_now, self.params_list, self.T)
         common_tangent = (g_left - g_right)/(x_alpha_now - x_beta_now)
         dcommon_tangent = 9999999.9
         n_iter_ct = 0
@@ -252,7 +252,7 @@ class FixedPointOperationForwardPass(nn.Module):
             Newton-Rapson iteration: x1 = x0 - f(x0)/f'(x0)
             """  
             def eq(x):
-                y = self.G(x, params_list, self.T) - common_tangent*x
+                y = self.G(x, self.params_list, self.T) - common_tangent*x
                 return y
             # update x_alpha
             dx = torch.tensor(999999.0)
@@ -287,7 +287,7 @@ class FixedPointOperationForwardPass(nn.Module):
                 x_beta_now = x_beta_now.reshape(1)
                 n_iter_dxbeta = n_iter_dxbeta + 1
             # after getting new x1 and x2, calculates the new common tangent, the same process goes on until the solution is self-consistent
-            common_tangent_new = (self.G(x_alpha_now, params_list, self.T) - self.G(x_beta_now, params_list, self.T))/(x_alpha_now - x_beta_now)
+            common_tangent_new = (self.G(x_alpha_now, self.params_list, self.T) - self.G(x_beta_now,self. params_list, self.T))/(x_alpha_now - x_beta_now)
             dcommon_tangent = torch.abs(common_tangent_new-common_tangent)
             common_tangent = common_tangent_new.clone().detach()
             n_iter_ct = n_iter_ct + 1

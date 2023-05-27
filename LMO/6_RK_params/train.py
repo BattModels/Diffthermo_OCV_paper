@@ -72,7 +72,7 @@ def newton_raphson(func, x0, threshold=1e-6, in_backward_hood = False):
         f_now = g(x_now)
         J = autograd.functional.jacobian(g, x_now)
         f_now = torch.reshape(f_now, (2,1)) 
-        x_new = x_now - torch.reshape(torch.linalg.pinv(J)@f_now, (2,)) # TODO shall we use pinv?
+        x_new = x_now - torch.reshape(torch.linalg.pinv(J)@f_now, (2,)) 
         # detach for memory saving
         x_new = x_new.clone().detach() # detach for memory saving
         # clamp
@@ -133,7 +133,7 @@ def convex_hull(sample, ngrid=99, tolerance = _eps):
             h = base_working[i][0]; t = base_working[i][1] # h is the sample point at left side, t is the sample point at right side
             _n = torch.matmul(torch.from_numpy(np.array([[0.0,-1.0],[1.0,0.0]]).astype("float32")), torch.reshape((t[0:2]-h[0:2]), (2,1)))
             # limit to those having x value between the x value of h and t
-            left_id = torch.argmin(torch.abs(sample[:,0]-h[0])) + 1 # TODO is this implementation correct? Basically limiting the searching range within h and t
+            left_id = torch.argmin(torch.abs(sample[:,0]-h[0])) + 1 # limiting the searching range within h and t
             right_id = torch.argmin(torch.abs(sample[:,0]-t[0]))
             if left_id == right_id: # it means this piece of convex hull is the shortest piece possible
                 base_working_new.remove(base_working[i])
@@ -485,32 +485,6 @@ while loss > 0.0001 and epoch < 8000:
     loss_fake_gap = 0.0 # penalizing the redundant miscibility gap(s)
     # sample the Gibbs free energy landscape
     sample = sampling(GibbsFE, params_list, T=300, sampling_id=1)
-
-
-    # # BUG TODO 
-    # """ THE LANDSCAPE IS NOT CORRECT!! """
-    # x_ = sample[:,0]
-    # g_ = sample[:,1]
-    # # AMYAO DEBUG
-    # g_pred = [] # AMYAO DEBUG
-    # mu_pred = []
-    # for i in range(0, len(x_)):
-    #     x_now = x_[i]
-    #     # x_now = x[i]
-    #     x_now = x_now.requires_grad_()
-    #     g_now = GibbsFE(x_now, params_list, T=300)
-    #     mu_pred_now = autograd.grad(outputs=g_now, inputs=x_now, create_graph=True)[0]
-    #     mu_pred.append(mu_pred_now.detach().numpy())
-    #     g_pred.append(g_now.detach().numpy()) 
-    # g_pred = np.array(g_pred).squeeze()
-    # mu_pred = np.array(mu_pred).squeeze()
-    # SOC = x_.clone().numpy()
-    # plt.figure(figsize=(5,4))
-    # # plt.plot(SOC, g_pred, 'k--')
-    # plt.plot(SOC, mu_pred, 'k--')
-    # plt.show()
-    # exit()
-
 
     # give the initial guess of miscibility gap
     phase_boundarys_init, _ = convex_hull(sample) 

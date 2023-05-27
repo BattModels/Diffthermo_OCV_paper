@@ -72,7 +72,7 @@ def newton_raphson(func, x0, threshold=1e-6, in_backward_hood = False):
         f_now = g(x_now)
         J = autograd.functional.jacobian(g, x_now)
         f_now = torch.reshape(f_now, (2,1)) 
-        x_new = x_now - torch.reshape(torch.linalg.pinv(J)@f_now, (2,)) # TODO shall we use pinv?
+        x_new = x_now - torch.reshape(torch.linalg.pinv(J)@f_now, (2,))
         # detach for memory saving
         x_new = x_new.clone().detach() # detach for memory saving
         # clamp
@@ -133,7 +133,7 @@ def convex_hull(sample, ngrid=99, tolerance = _eps):
             h = base_working[i][0]; t = base_working[i][1] # h is the sample point at left side, t is the sample point at right side
             _n = torch.matmul(torch.from_numpy(np.array([[0.0,-1.0],[1.0,0.0]]).astype("float32")), torch.reshape((t[0:2]-h[0:2]), (2,1)))
             # limit to those having x value between the x value of h and t
-            left_id = torch.argmin(torch.abs(sample[:,0]-h[0])) + 1 # TODO is this implementation correct? Basically limiting the searching range within h and t
+            left_id = torch.argmin(torch.abs(sample[:,0]-h[0])) + 1 # limiting the searching range within h and t
             right_id = torch.argmin(torch.abs(sample[:,0]-t[0]))
             if left_id == right_id: # it means this piece of convex hull is the shortest piece possible
                 base_working_new.remove(base_working[i])
