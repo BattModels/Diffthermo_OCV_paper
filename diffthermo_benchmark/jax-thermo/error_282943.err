@@ -1,2 +1,0 @@
-No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
-slurmstepd: error: *** JOB 282943 ON d011 CANCELLED AT 2023-01-30T22:51:34 DUE TO TIME LIMIT ***
