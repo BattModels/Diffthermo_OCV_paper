@@ -13,3 +13,6 @@ Discharge_4_RK_params_splines: deprecated. Nothing important there.
 pybamm_run: contains the pybamm simulation results shown in Figure 3. Refer to README.md in the folder to see details.
 
 draw_all.py: collect results from all 4 OCV models and draw Figure 2 of the manuscript.
+
+extrapolation: to prove the claim in the manuscript "Also, as the regular RK model adopts high-order R-K polynomial expansion of excess enthalpy and is fitted within the SOC range given by the experimental data, the predicted OCV value decreases drastically for the SOC outside the fitted range as shown in figure 2(d). However, the model proposed in this work does not have such unphysical behaviour, as the excess enthalpy is expanded to only 3rd order, therefore no overfitting is observed". In this folder, both the thermodynamically consistent model and the regular R-K model are trained with filling fraction from 0 to 0.935 (i.e. all  except the last 10 datapoints), and use the trained models to predict the voltage value on the last datapoint where x = 0.94. Regular R-K model gives extrapolation error 0.1747 V, while thermodynamically consistent model gives 0.0787 V.
+
