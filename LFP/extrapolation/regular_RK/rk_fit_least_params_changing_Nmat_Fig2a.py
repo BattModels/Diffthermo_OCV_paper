@@ -39,9 +39,8 @@ To prove regular RK overfits, we leave the last 10 datapoint out (train from x= 
 """
 x_discharge = discharge_data[0:-10,0]/169.91 # divided by the theoretical capacity of LFP
 U_discharge = discharge_data[0:-10,1]
-x_leaveout = discharge_data[-1,0]/169.91
-U_leaveout = discharge_data[-1,1]
-print(x_discharge[-1], x_leaveout)
+x_leaveout = discharge_data[-10:,0]/169.91
+U_leaveout = discharge_data[-10:,1]
 # x_discharge = x_discharge[4:]
 # U_discharge = U_discharge[4:]
 Lopt_discharge, _ = curve_fit(U_RK,x_discharge,U_discharge,p0=np.ones(n_RK+1))
@@ -54,10 +53,48 @@ print("RMSE discharge = %.4f" %(loss_discharge))
 
 """predict on the last data point"""
 
+
 U_leaveout_RK = U_RK(x_leaveout, Lopt_discharge)
-print("Leaveout point: RK predicts %.4f, real value %.4f, error %.4f" %(U_leaveout_RK, U_leaveout, np.abs(U_leaveout-U_leaveout_RK)))
-text = "Leaveout point: RK predicts %.4f, real value %.4f, error %.4f" %(U_leaveout_RK, U_leaveout, np.abs(U_leaveout-U_leaveout_RK))
+error = np.abs(U_leaveout_RK - U_leaveout)
+text = "Last datapoint: RK predicts %.4f, real value %.4f, error %.4f" %(U_leaveout_RK[-1], U_leaveout[-1], np.abs(U_leaveout[-1]-U_leaveout_RK[-1]))
 print(text)
 with open("result.txt",'w') as fout:
+    fout.write("SOC value on last 10 datapoints: \n")
+    for item in x_leaveout:
+        fout.write("%.4f  " %(item))
+    fout.write("\n")
+    fout.write("Experimental value on last 10 datapoints: \n")
+    for item in U_leaveout:
+        fout.write("%.4f  " %(item))
+    fout.write("\n")
+    fout.write("Model prediction on last 10 datapoints: \n")
+    for item in U_leaveout_RK:
+        fout.write("%.4f  " %(item))
+    fout.write("\n")
+    fout.write("Absolute error on last 10 datapoints: \n")
+    for item in error:
+        fout.write("%.4f  " %(item))
+    fout.write("\n")
     fout.write(text)
+
+np.savez("pred.npz", x=x_leaveout, y=U_leaveout, y_pred=U_leaveout_RK) # can be load as data=np.load("RK.npz"), SOC = data['x'], OCV_pred_RK = data['y']
+
+
+# figure
+# discharge
+x_discharge = discharge_data[:,0]/169.91 # divided by the theoretical capacity of LFP
+U_discharge = discharge_data[:,1]
+U_discharge_RK = U_RK(x_discharge, Lopt_discharge)
+plt.plot(x_discharge,U_discharge,'bo',label="Discharge Voltage (Experimental)", markersize=1.5)
+plt.plot(x_discharge,U_discharge_RK,'k-',label="Discharge Voltage (RK)")
+plt.legend(fontsize=8)
+plt.xlim([0.0,1.0])
+# plt.ylim([-0.02,0.04])
+plt.xlabel("x", fontsize=12, fontname='Arial')
+plt.xticks(fontsize=12, fontname='Arial')
+plt.ylabel("U(x)", fontsize=12, fontname='Arial')
+plt.yticks(fontsize=12, fontname='Arial')
+plt.show()
+
+
 exit()

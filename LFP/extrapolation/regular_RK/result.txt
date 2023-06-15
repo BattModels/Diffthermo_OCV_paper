@@ -1,1 +1,9 @@
-Leaveout point: RK predicts 3.8373, real value 4.0120, error 0.1747
+SOC value on last 10 datapoints: 
+0.9341  0.9345  0.9355  0.9359  0.9367  0.9372  0.9380  0.9385  0.9391  0.9405  
+Experimental value on last 10 datapoints: 
+3.8155  3.8376  3.8641  3.8864  3.9069  3.9278  3.9495  3.9718  3.9926  4.0120  
+Model prediction on last 10 datapoints: 
+3.8086  3.8177  3.8418  3.8504  3.8649  3.8706  3.8756  3.8753  3.8709  3.8373  
+Absolute error on last 10 datapoints: 
+0.0069  0.0199  0.0223  0.0360  0.0421  0.0572  0.0739  0.0965  0.1217  0.1747  
+Last datapoint: RK predicts 3.8373, real value 4.0120, error 0.1747
