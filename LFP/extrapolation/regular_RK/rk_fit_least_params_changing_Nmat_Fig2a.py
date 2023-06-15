@@ -79,6 +79,12 @@ with open("result.txt",'w') as fout:
 
 np.savez("pred.npz", x=x_leaveout, y=U_leaveout, y_pred=U_leaveout_RK) # can be load as data=np.load("RK.npz"), SOC = data['x'], OCV_pred_RK = data['y']
 
+x_close_to_1 = np.array([0.95, 0.96, 0.97, 0.98])
+U_close_to_1 = U_RK(x_close_to_1, Lopt_discharge)
+print("\nClose to 1:")
+print(x_close_to_1)
+print(U_close_to_1)
+print("\n")
 
 # figure
 # discharge

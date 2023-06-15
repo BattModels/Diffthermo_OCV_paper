@@ -532,7 +532,31 @@ while epoch < 0:
     
     np.savez("pred.npz", y=U_true_value[-10:], y_pred=U_pred_after_ct[-10:]) # can be load as data=np.load("RK.npz"), SOC = data['x'], OCV_pred_RK = data['y']
 
-    
+    # close to 1
+    SOC_close_to_1 = np.linspace(0.91, 0.97, num=50)
+    SOC_close_to_1 = SOC_close_to_1.astype("float32")
+    SOC_close_to_1 = torch.from_numpy(SOC_close_to_1) 
+    mu_pred = []
+    for i in range(0, len(SOC_close_to_1)):
+        SOC_now = SOC_close_to_1[i]
+        x_now = 1-SOC_now
+        mu_now = mu[i]
+        x_now = x_now.requires_grad_()
+        g_now = GibbsFE(x_now, params_list, T=300)
+        mu_pred_now = autograd.grad(outputs=g_now, inputs=x_now, create_graph=True)[0]
+        mu_pred.append(mu_pred_now.detach().numpy())
+    mu_pred = np.array(mu_pred)
+    plt.figure(figsize=(5,4))
+    U_pred = mu_pred/(-96485) # we know there is no phase separation
+    plt.plot(SOC_close_to_1, U_pred, 'r--', label="Prediction")
+    # np.savez("RK_diffthermo_SOC_close_to_1.npz", x=SOC_close_to_1, y=U_pred) # can be load as data=np.load("RK_diffthermo_SOC_close_to_1.npz"), SOC_close_to_1 = data['x'], OCV_pred_RK_close_to_1 = data['y']
+    U_true_value = mu.numpy()/(-96485) # plot the true value
+    plt.xlim([0.91,0.97])
+    # plt.ylim([1.5, 5.0])
+    plt.legend()
+    plt.xlabel("SOC")
+    plt.ylabel("OCV (V)")
+    plt.show()
 
 
 exit()
