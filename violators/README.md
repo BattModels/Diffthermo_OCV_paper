@@ -26,7 +26,7 @@ RK_Plett_LFP.npz: skewed RK for LFP, from Plett's textbook (Battery Management S
 
 Nejad_fig1a_J_Power_Sources_2016.npz: 8th-order polynomial for LFP from Nejad et al., figure 1(a) (http://dx.doi.org/10.1016/j.jpowsour.2016.03.042), violating region x=[0.775, 0.925]
 
-Weng_Fig4_J_Power_Sources_2014.npz: Double exponential function for LFP from Weng et al., figure 4 Model 2. (In fact Model 5, i.e. 6th-order polynomial, violates as well) (http://dx.doi.org/10.1016/j.jpowsour.2014.02.026), violating region [0.80, 0.90]
+Weng_Fig4_J_Power_Sources_2014.npz: Double exponential function for a LFP|graphite battery from Weng et al., figure 4 Model 2. (In fact Model 5, i.e. 6th-order polynomial, violates as well) (http://dx.doi.org/10.1016/j.jpowsour.2014.02.026), violating region [0.80, 0.90]
 
 
 Pan_Fig8_Energy_2017.npz: 6-th order polynomial for a NMC|graphite battery from Pan et al, Figure 8 (http://dx.doi.org/10.1016/j.energy.2017.07.099), violating region [0.10, 0.24]
