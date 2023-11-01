@@ -298,7 +298,7 @@ ax_now.set_ylabel("OCV (V)", fontsize=20)
 ax_now.set_ylim([0.0, 0.72])
 ax_now.set_xlim([0.0, 1.0])
 ax_now.legend(fontsize=16, frameon=False)
-ax_now.set_title('Graphite, 7 RK Parameters',fontsize=20)
+ax_now.set_title('Graphite, 9 RK Parameters',fontsize=20)
 ax_now.tick_params(axis='both', which='major', labelsize=20)  
 ax_now.locator_params(axis='both', nbins=5)
 for axis in ['top','bottom','left','right']:
