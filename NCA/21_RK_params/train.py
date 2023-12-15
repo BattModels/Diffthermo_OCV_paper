@@ -459,6 +459,30 @@ Omega18_start = np.random.randint(-100,100)*100
 Omega19_start = np.random.randint(-100,100)*100
 Omega20_start = np.random.randint(-100,100)*100
 
+# re-start from epoch 6500
+G0_start = -381555.5625 
+Omega0_start = -42432.0820 
+Omega1_start = 6579.1157 
+Omega2_start = 23361.8047 
+Omega3_start = 31590.4922 
+Omega4_start = 28378.8008 
+Omega5_start = 29163.8047 
+Omega6_start = 8955.4033 
+Omega7_start = -7601.7798 
+Omega8_start = -3563.2253 
+Omega9_start = 19743.1211 
+Omega10_start = -24798.2754 
+Omega11_start = 2853.8174 
+Omega12_start = 293.8150 
+Omega13_start = -15989.4336 
+Omega14_start = 33684.6250 
+Omega15_start = -27924.1973 
+Omega16_start = 42068.6250 
+Omega17_start = -28561.3672 
+Omega18_start = -243.7913
+Omega19_start = 42760.6289 
+Omega20_start = -119639.9375 
+
 G0 = nn.Parameter( torch.from_numpy(np.array([G0_start],dtype="float32")) ) 
 Omega0 = nn.Parameter( torch.from_numpy(np.array([Omega0_start],dtype="float32")) ) 
 Omega1 = nn.Parameter( torch.from_numpy(np.array([Omega1_start],dtype="float32")) ) 
