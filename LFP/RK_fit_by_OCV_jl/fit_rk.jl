@@ -145,6 +145,10 @@ ys = reverse(ys) # now ys should be monotonically increasing
 rk_params = value.(a[1][:x]) # value function comes from JuMP pkg
 U_0 = rk_params[length(rk_params)]   # the last fitted param is U0
 @printf("U0 fitted is  %.4f V\n", (U_0))
+for i in range(1, step=1, stop=length(rk_params))
+    @printf("%.4f\n", (rk_params[i]))
+end
+@printf("\n\n\n\n")
 
 # calculate fitted OCV
 c_s_max = 100000.0
