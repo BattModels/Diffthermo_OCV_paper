@@ -137,14 +137,15 @@ ys = OCV_true - (R*T)/(n*F) * log.((1.0 .- xs)./xs) # OCV, you have to subtract 
 xs = reverse(xs)
 ys = reverse(ys) # now ys should be monotonically decreasing
 # fit
-rk_order = 51
+rk_order = 21
 A = RK_Matrix(xs,rk_order) 
-a = OCV.MonotonicDecreaseLeastSquaresFit(A,ys)
+a = OCV.MonotonicIncreaseLeastSquaresFit(A,ys)
 xs = reverse(xs) # after fitting, reverse back xs and ys
 ys = reverse(ys) # now ys should be monotonically increasing
 rk_params = value.(a[1][:x]) # value function comes from JuMP pkg
 U_0 = rk_params[length(rk_params)]   # the last fitted param is U0
 @printf("U0 fitted is  %.4f V\n", (U_0))
+@printf("total number of RK params %d\n", (length(rk_params)))
 
 # calculate fitted OCV
 c_s_max = 100000.0

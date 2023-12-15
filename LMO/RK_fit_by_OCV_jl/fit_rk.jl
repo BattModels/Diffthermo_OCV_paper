@@ -137,7 +137,7 @@ ys = OCV_true - (R*T)/(n*F) * log.((1.0 .- xs)./xs) # OCV, you have to subtract 
 xs = reverse(xs)
 ys = reverse(ys) # now ys should be monotonically decreasing
 # fit
-rk_order = 51
+rk_order = 21
 A = RK_Matrix(xs,rk_order) 
 a = OCV.MonotonicDecreaseLeastSquaresFit(A,ys)
 xs = reverse(xs) # after fitting, reverse back xs and ys
