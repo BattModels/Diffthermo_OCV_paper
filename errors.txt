@@ -1,0 +1,48 @@
+LFP Diffthermo RMSE: 14.49mV
+LFP Mono  R-K  RMSE: 117.40mV
+
+
+LixFeSiO4 Diffthermo RMSE: 11.96mV
+LixFeSiO4 Mono  R-K  RMSE: 41.37mV
+
+
+LCO Diffthermo RMSE: 24.17mV
+LCO Mono  R-K  RMSE: 86.64mV
+
+
+LMP Diffthermo RMSE: 21.29mV
+LMP Mono  R-K  RMSE: 33.89mV
+
+
+LMFP Diffthermo RMSE: 45.17mV
+LMFP Mono  R-K  RMSE: 230.38mV
+
+
+LMO Diffthermo RMSE: 12.10mV
+LMO Mono  R-K  RMSE: 46.16mV
+
+
+NCO Diffthermo RMSE: 10.27mV
+NCO Mono  R-K  RMSE: 22.96mV
+
+
+NCA Diffthermo RMSE: 6.28mV
+NCA Mono  R-K  RMSE: 3.47mV
+
+
+NMC Diffthermo RMSE: 6.13mV
+NMC Mono  R-K  RMSE: 7.52mV
+
+
+Graphite Diffthermo RMSE: 3.22mV
+Graphite Mono  R-K  RMSE: 41.56mV
+
+
+Si Diffthermo RMSE: 5.30mV
+Si Mono  R-K  RMSE: 14.26mV
+
+
+LTO Diffthermo RMSE: 35.36mV
+LTO Mono  R-K  RMSE: 165.61mV
+
+
