@@ -1,9 +1,0 @@
-SOC value on last 10 datapoints: 
-0.9341  0.9345  0.9355  0.9359  0.9367  0.9372  0.9380  0.9385  0.9391  0.9405  
-Experimental value on last 10 datapoints: 
-3.8155  3.8376  3.8641  3.8864  3.9069  3.9278  3.9495  3.9718  3.9926  4.0120  
-Model prediction on last 10 datapoints: 
-3.8097  3.8192  3.8447  3.8541  3.8705  3.8776  3.8854  3.8876  3.8861  3.8624  
-Absolute error on last 10 datapoints: 
-0.0058  0.0184  0.0194  0.0323  0.0364  0.0502  0.0642  0.0842  0.1065  0.1496  
-Last datapoint: RK predicts 3.8624, real value 4.0120, error 0.1496

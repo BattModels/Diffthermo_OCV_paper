@@ -1,7 +1,0 @@
-Experimental value on last 10 datapoints: 
-3.8155  3.8376  3.8641  3.8864  3.9069  3.9278  3.9495  3.9718  3.9926  4.0120  
-Model prediction on last 10 datapoints: 
-3.7820  3.7900  3.8133  3.8229  3.8429  3.8540  3.8720  3.8855  3.8991  3.9333  
-Absolute error on last 10 datapoints: 
-0.0335  0.0476  0.0508  0.0634  0.0640  0.0738  0.0776  0.0863  0.0935  0.0787  
-Leaveout point: RK predicts 3.9333, real value 4.0120, error 0.0787
