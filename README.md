@@ -17,13 +17,13 @@ and then copy the diffthermo folder into your work directory.
 It's as simple as only 3 lines of commands!
 ```python
 from diffthermo.utils import train, write_ocv_functions
-# fit the function
+# fit the OCV function
 params_list = train(datafile_name='data.csv', 
                     number_of_Omegas = 6, 
                     learning_rate = 1000.0, 
                     total_training_epochs = 8000,
                     loss_threshold = 0.01)
-# write the result in PyBaMM OCV function format
+# write the fitted OCV function in PyBaMM OCV function format
 write_ocv_functions(params_list)
 ```
 After the fitting, you can find your fitted PyBaMM OCV function in the file `fitted_ocv_functions.py`.
@@ -37,7 +37,7 @@ examples: example on how to fit a thermodynamically consistent OCV functions wit
 
 data_for_manuscripts: contains all source code & run results for the paper "Open-Circuit Voltage Models Should Be Thermodynamically Consistent".
 
-pybamm_OCV_functions: contains all the 12 fitted thermodynamically consistent OCV functions, implemented in PyBamm.
+pybamm_OCV_functions: contains all the 12 fitted thermodynamically consistent OCV functions, implemented in PyBamm. 
 
 
 
