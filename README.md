@@ -27,7 +27,7 @@ params_list = train(datafile_name='data.csv',
 write_ocv_functions(params_list)
 ```
 After the fitting, you can find your fitted PyBaMM OCV function in the file `fitted_ocv_functions.py`.
-See `examples` for the files. If you want to learn more on the method, please refer to the paper "Open-Circuit Voltage Models Should Be Thermodynamically Consistent"
+See `examples` for the files. If you want to learn more on the method, please refer to the paper "Open-Circuit Voltage Models Should Be Thermodynamically Consistent", DOI: 10.1021/acs.jpclett.3c03129
 
 
 ## Folders In This Repo
@@ -40,6 +40,8 @@ data_for_manuscripts: contains all source code & run results for the paper "Open
 pybamm_OCV_functions: contains all the 12 fitted thermodynamically consistent OCV functions, implemented in PyBamm. 
 
 
+## Cite this work
+If you find this repo useful in your research, please cite this work as "Open-Circuit Voltage Models Should Be Thermodynamically Consistent", DOI: 10.1021/acs.jpclett.3c03129
 
 
 
