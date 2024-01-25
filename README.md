@@ -42,7 +42,7 @@ pybamm_OCV_functions: contains all the 12 fitted thermodynamically consistent OC
 
 ## Cite this work
 If you find this repo useful in your research, please cite this work as follows (BibTex Format):
-
+```
 @article{doi:10.1021/acs.jpclett.3c03129,
 author = {Yao, Archie Mingze and Viswanathan, Venkatasubramanian},
 title = {Open-Circuit Voltage Models Should Be Thermodynamically Consistent},
@@ -52,23 +52,14 @@ number = {0},
 pages = {1143-1151},
 year = {0},
 doi = {10.1021/acs.jpclett.3c03129},
-
 URL = { 
-    
         https://doi.org/10.1021/acs.jpclett.3c03129
-    
-    
-
 },
 eprint = { 
-    
         https://doi.org/10.1021/acs.jpclett.3c03129
-    
-    
-
 }
-
 }
+```
 
 
 
