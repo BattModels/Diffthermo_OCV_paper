@@ -1,5 +1,5 @@
 # diffthermo
-diffthermo is a python library for fitting thermodynamically consistent OCV models.
+diffthermo is a python library for fitting thermodynamically consistent OCV models. It takes OCV and SoC as input, automatically does all the fitting and returns OCV models in **PyBaMM** and **Matlab** formats. 
 
 
 ## Installation 
@@ -26,7 +26,9 @@ params_list = train(datafile_name='data.csv',
 # write the fitted OCV function in PyBaMM OCV function format
 write_ocv_functions(params_list)
 ```
-After the fitting, you can find your fitted PyBaMM OCV function in the file `fitted_ocv_functions.py`.
+After the fitting, you can find your fitted PyBaMM OCV function in the file `fitted_ocv_functions.py`, and the MATLAB OCV function in the file `fitted_ocv_functions.m`.
+Copy and paste them into your own projects and that's it! Incredibly easy, isn't it?
+
 See `examples` for the files. If you want to learn more on the method, please refer to the paper "Open-Circuit Voltage Models Should Be Thermodynamically Consistent", https://pubs.acs.org/doi/10.1021/acs.jpclett.3c03129
 
 
@@ -37,7 +39,7 @@ examples: example on how to fit a thermodynamically consistent OCV functions wit
 
 data_for_manuscripts: contains all source code & run results for the paper "Open-Circuit Voltage Models Should Be Thermodynamically Consistent".
 
-pybamm_OCV_functions: contains all the 12 fitted thermodynamically consistent OCV functions, implemented in PyBamm. 
+pybamm_OCV_functions: contains all the 12 fitted thermodynamically consistent OCV functions, implemented in PyBamm. You can get your OCV model in **Matlab** by running the fitting process and check the output file `fitted_ocv_functions.m`.
 
 
 ## Cite this work
