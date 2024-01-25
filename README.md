@@ -27,7 +27,7 @@ params_list = train(datafile_name='data.csv',
 write_ocv_functions(params_list)
 ```
 After the fitting, you can find your fitted PyBaMM OCV function in the file `fitted_ocv_functions.py`.
-See `examples` for the files. If you want to learn more on the method, please refer to the paper "Open-Circuit Voltage Models Should Be Thermodynamically Consistent", DOI: 10.1021/acs.jpclett.3c03129
+See `examples` for the files. If you want to learn more on the method, please refer to the paper "Open-Circuit Voltage Models Should Be Thermodynamically Consistent", https://pubs.acs.org/doi/10.1021/acs.jpclett.3c03129
 
 
 ## Folders In This Repo
@@ -41,7 +41,24 @@ pybamm_OCV_functions: contains all the 12 fitted thermodynamically consistent OC
 
 
 ## Cite this work
-If you find this repo useful in your research, please cite this work as "Open-Circuit Voltage Models Should Be Thermodynamically Consistent", DOI: 10.1021/acs.jpclett.3c03129
+If you find this repo useful in your research, please cite this work as follows (BibTex Format):
+
+@article{doi:10.1021/acs.jpclett.3c03129,
+author = {Yao, Archie Mingze and Viswanathan, Venkatasubramanian},
+title = {Open-Circuit Voltage Models Should Be Thermodynamically Consistent},
+journal = {The Journal of Physical Chemistry Letters},
+volume = {0},
+number = {0},
+pages = {1143-1151},
+year = {0},
+doi = {10.1021/acs.jpclett.3c03129},
+URL = {     
+        https://doi.org/10.1021/acs.jpclett.3c03129
+},
+eprint = { 
+        https://doi.org/10.1021/acs.jpclett.3c03129
+}
+}
 
 
 
