@@ -314,7 +314,7 @@ def write_ocv_functions(params_list):
     else:
         print("No phase separation region detected.")
 
-    # print output function
+    # print output function in python
     with open("fitted_ocv_functions.py", "w") as fout:
         fout.write("import numpy as np\nimport pybamm\nfrom pybamm import exp, log, tanh, constants, Parameter, ParameterValues\n\n")
         fout.write("def fitted_OCP(sto):\n")
@@ -360,6 +360,56 @@ def write_ocv_functions(params_list):
             text = text0 + "(" + text1 + ")\n"
             fout.write(text)
             fout.write("    return -mu_e/96485.0\n\n\n\n")
+            
+    # print output function in matlab
+    with open("fitted_ocv_functions.m", "w") as fout:
+        fout.write("function result = ocv(sto):\n")
+        fout.write("    eps = 1e-7;\n")
+        fout.write("    %% rk params\n")
+        fout.write("    G0 = %.6f; %G0 is the pure substance gibbs free energy \n" %(params_list[-1].item()))
+        for i in range(0, len(params_list)-1):
+            fout.write("    Omega%d = %.6f; \n" %(i, params_list[i].item()))
+        text = "    Omegas =["
+        for i in range(0, len(params_list)-1):
+            text=text+"Omega"+str(i)
+            if i!= len(params_list)-2:
+                text=text+", "
+            else:
+                text=text+"];\n"
+        fout.write(text)
+        # write phase boundaries
+        if len(phase_boundary_fixed_point)>0:
+            for i in range(0, len(phase_boundary_fixed_point)):
+                fout.write("    % phase boundary %d\n" %(i))
+                fout.write("    x_alpha_%d = %.16f ; \n" %(i, phase_boundary_fixed_point[i][0]))
+                fout.write("    x_beta_%d = %.16f ; \n" %(i, phase_boundary_fixed_point[i][1]))
+                fout.write("    mu_coex_%d = %.16f ; \n" %(i, cts[i]))
+                fout.write("    is_outside_miscibility_gap_%d = (sto<x_alpha_%d) + (sto>x_beta_%d) ; \n" %(i,i,i))
+            fout.write("    % whether is outside all gap\n")
+            text = "    is_outside_miscibility_gaps = "
+            for i in range(0, len(phase_boundary_fixed_point)):
+                text = text + "is_outside_miscibility_gap_%d " %(i)
+                if i!=len(phase_boundary_fixed_point)-1:
+                    text = text + "* "
+            fout.write(text)
+            fout.write(";    \n")
+            fout.write("    mu_outside = G0 + 8.314*300.0*log((sto+eps)/(1-sto+eps)) ; \n") 
+            
+            fout.write("    for i=0:length(Omegas)-1\n")
+            fout.write("        mu_outside = mu_outside + is_outside_miscibility_gaps * Omegas[i+1]*((1-2*sto)^(i+1) - 2*i*sto*(1-sto)*(1-2*sto)^(i-1));\n")
+            fout.write("end\n")
+            
+            text0 = "    mu_e = is_outside_miscibility_gaps * mu_outside + (1-is_outside_miscibility_gaps) *   "
+            text1 = ""
+            for i in range(0, len(cts)):
+                text1 = text1 + "(1-is_outside_miscibility_gap_%d)*mu_coex_%d " %(i, i)
+                if i != len(cts)-1:
+                    text1 = text1 + " + "
+            text = text0 + "(" + text1 + ") ;\n"
+            fout.write(text)
+            fout.write("    result = -mu_e/96485.0 ;")
+            fout.write("    return;")
+            fout.write("end  \n\n\n")
     # write complete
     print("\n\n\n\n\n Fitting Complete.\n")
     print("Fitted OCV function written in PyBaMM function (copy and paste readay!):\n")
@@ -369,4 +419,4 @@ def write_ocv_functions(params_list):
     for line in lines:
         print(line, end='')
     print("\n\n###################################\n")
-    print("Or check fitted_ocv_functions.py for fitted thermodynamically consistent OCV model in PyBaMM format. ")
+    print("Or check fitted_ocv_functions.py and fitted_ocv_functions.m for fitted thermodynamically consistent OCV model in PyBaMM & Matlab formats. ")
