@@ -11,7 +11,17 @@ After succesfully installed the environment,
 ```bash
 conda activate diffthermo 
 ```
-and then copy the diffthermo folder into your work directory.
+download the github repo
+```bash
+git clone https://github.com/BattModels/Diffthermo_OCV_paper.git
+```
+```bash
+cd Diffthermo_OCV_paper
+```
+and then install the package
+```bash
+pip install .
+```
 
 ## Usage
 It's as simple as only 3 lines of commands!
