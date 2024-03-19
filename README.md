@@ -39,13 +39,15 @@ write_ocv_functions(params_list)
 After the fitting, you can find your fitted PyBaMM OCV function in the file `fitted_ocv_functions.py`, and the MATLAB OCV function in the file `fitted_ocv_functions.m`.
 Copy and paste them into your own projects and that's it! Incredibly easy, isn't it?
 
-See `examples` for the files. If you want to learn more on the method, please refer to the paper "Open-Circuit Voltage Models Should Be Thermodynamically Consistent", https://pubs.acs.org/doi/10.1021/acs.jpclett.3c03129
+See [`example_graphite_OCV.ipynb`](examples/example_graphite_OCV.ipynb) under folder `examples` as a quick example. 
+
+If you want to learn more on the method, please refer to the paper "Open-Circuit Voltage Models Should Be Thermodynamically Consistent", https://pubs.acs.org/doi/10.1021/acs.jpclett.3c03129
 
 
 ## Folders In This Repo
 diffthermo: the source code. 
 
-examples: example on how to fit a thermodynamically consistent OCV functions with a graphite OCV dataset.
+examples: example on how to fit a thermodynamically consistent OCV functions with a graphite OCV dataset. The jupyter notebook file `example_graphite_OCV.ipynb` explains how to use the package using the graphite OCV as an example. 
 
 data_for_manuscripts: contains all source code & run results for the paper "Open-Circuit Voltage Models Should Be Thermodynamically Consistent".
 
