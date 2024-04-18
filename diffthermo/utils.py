@@ -380,12 +380,12 @@ def write_ocv_functions(params_list):
         # write phase boundaries
         if len(phase_boundary_fixed_point)>0:
             for i in range(0, len(phase_boundary_fixed_point)):
-                fout.write("    % phase boundary %d\n" %(i))
+                fout.write("    %% phase boundary %d\n" %(i))
                 fout.write("    x_alpha_%d = %.16f ; \n" %(i, phase_boundary_fixed_point[i][0]))
                 fout.write("    x_beta_%d = %.16f ; \n" %(i, phase_boundary_fixed_point[i][1]))
                 fout.write("    mu_coex_%d = %.16f ; \n" %(i, cts[i]))
                 fout.write("    is_outside_miscibility_gap_%d = (sto<x_alpha_%d) + (sto>x_beta_%d) ; \n" %(i,i,i))
-            fout.write("    % whether is outside all gap\n")
+            fout.write("    %% whether is outside all gap\n")
             text = "    is_outside_miscibility_gaps = "
             for i in range(0, len(phase_boundary_fixed_point)):
                 text = text + "is_outside_miscibility_gap_%d " %(i)
