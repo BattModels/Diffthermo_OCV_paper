@@ -43,7 +43,7 @@ Copy and paste them into your own projects and that's it! Incredibly easy, isn't
 
 See [`example_graphite_OCV.ipynb`](examples/example_graphite_OCV.ipynb) under folder `examples` as a quick example, and what do all the parameters for `train` function means. 
 
-*A quick note: if your fitted results does not look good, TRY adjusting `G0_rand_range` and `Omegas_rand_range` in `train` function. These two parameters control the initial guess of G0 and Omegas.  Usually for an anode material, G0_rand_range=[-10*5000,-5*5000], Omegas_rand_range=[-10*100,10*100] work well, and for cathode material, G0_rand_range=[-100*5000,-50*5000], Omegas_rand_range=[-100*100,100*100] work.* 
+*A quick note: if your fitted results does not look good, TRY adjusting `G0_rand_range` and `Omegas_rand_range` in `train` function. These two parameters control the initial guess of G0 and Omegas.* *Usually for an anode material,* G0_rand_range=[-10*5000,-5*5000], Omegas_rand_range=[-10*100,10*100] work well, *and for cathode material,* G0_rand_range=[-100*5000,-50*5000], Omegas_rand_range=[-100*100,100*100] work. 
 
 If you want to know why exactly this fitting works, please refer to the paper "Open-Circuit Voltage Models Should Be Thermodynamically Consistent", https://pubs.acs.org/doi/10.1021/acs.jpclett.3c03129, or the code walk-through recording at https://drive.google.com/file/d/1PhCyvpmG28VjrClAviWHXVTnlqQScGIM/view?usp=sharing. 
 
