@@ -366,7 +366,7 @@ def write_ocv_functions(params_list):
         fout.write("function result = ocv(sto):\n")
         fout.write("    eps = 1e-7;\n")
         fout.write("    %% rk params\n")
-        fout.write("    G0 = %.6f; %G0 is the pure substance gibbs free energy \n" %(params_list[-1].item()))
+        fout.write("    G0 = %.6f; %%G0 is the pure substance gibbs free energy \n" %(params_list[-1].item()))
         for i in range(0, len(params_list)-1):
             fout.write("    Omega%d = %.6f; \n" %(i, params_list[i].item()))
         text = "    Omegas =["
