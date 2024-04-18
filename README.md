@@ -28,20 +28,24 @@ It's as simple as only 3 lines of commands!
 ```python
 from diffthermo.utils import train, write_ocv_functions
 # fit the OCV function
-params_list = train(datafile_name='data.csv', 
-                    number_of_Omegas = 6, 
-                    learning_rate = 1000.0, 
-                    total_training_epochs = 8000,
-                    loss_threshold = 0.01)
+params_list = train(datafile_name='graphite.csv', 
+                        number_of_Omegas=6, 
+                        learning_rate = 1000.0, 
+                        total_training_epochs = 8000,
+                        loss_threshold = 0.01,
+                        G0_rand_range=[-10*5000,-5*5000], 
+                        Omegas_rand_range=[-10*100,10*100])
 # write the fitted OCV function in PyBaMM OCV function format
 write_ocv_functions(params_list)
 ```
 After the fitting, you can find your fitted PyBaMM OCV function in the file `fitted_ocv_functions.py`, and the MATLAB OCV function in the file `fitted_ocv_functions.m`.
 Copy and paste them into your own projects and that's it! Incredibly easy, isn't it?
 
-See [`example_graphite_OCV.ipynb`](examples/example_graphite_OCV.ipynb) under folder `examples` as a quick example. 
+See [`example_graphite_OCV.ipynb`](examples/example_graphite_OCV.ipynb) under folder `examples` as a quick example, and what do all the parameters for `train` function means. 
 
-If you want to learn more on the method, please refer to the paper "Open-Circuit Voltage Models Should Be Thermodynamically Consistent", https://pubs.acs.org/doi/10.1021/acs.jpclett.3c03129, or the code walk-through recording at https://drive.google.com/file/d/1PhCyvpmG28VjrClAviWHXVTnlqQScGIM/view?usp=sharing. 
+*A quick note: if your fitted results does not look good, TRY adjusting `G0_rand_range` and `Omegas_rand_range` in `train` function. These two parameters control the initial guess of G0 and Omegas.  Usually for an anode material, G0_rand_range=[-10*5000,-5*5000], Omegas_rand_range=[-10*100,10*100] work well, and for cathode material, G0_rand_range=[-100*5000,-50*5000], Omegas_rand_range=[-100*100,100*100] work.* 
+
+If you want to know why exactly this fitting works, please refer to the paper "Open-Circuit Voltage Models Should Be Thermodynamically Consistent", https://pubs.acs.org/doi/10.1021/acs.jpclett.3c03129, or the code walk-through recording at https://drive.google.com/file/d/1PhCyvpmG28VjrClAviWHXVTnlqQScGIM/view?usp=sharing. 
 
 
 ## Folders In This Repo
