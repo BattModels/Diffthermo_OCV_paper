@@ -38,14 +38,17 @@ params_list = train(datafile_name='graphite.csv',
 # write the fitted OCV function in PyBaMM OCV function format
 write_ocv_functions(params_list)
 ```
-After the fitting, you can find your fitted PyBaMM OCV function in the file `fitted_ocv_functions.py`, and the MATLAB OCV function in the file `fitted_ocv_functions.m`.
-Copy and paste them into your own projects and that's it! Incredibly easy, isn't it?
+After the fitting, you can find your fitted PyBaMM OCV function in the file `fitted_ocv_functions.py`, and the MATLAB OCV function in the file `fitted_ocv_functions.m`, or directly find them in the terminal where you executed the fitting code. Copy and paste them into your own projects and that's it! Incredibly easy, isn't it?
 
 See [`example_graphite_OCV.ipynb`](examples/example_graphite_OCV.ipynb) under folder `examples` as a quick example, and what do all the parameters for `train` function means. 
 
-*A quick note: if your fitted results does not look good, TRY adjusting `G0_rand_range` and `Omegas_rand_range` in `train` function. These two parameters control the initial guess of G0 and Omegas.* *Usually for an anode material,* `G0_rand_range=[-10*5000,-5*5000], Omegas_rand_range=[-10*100,10*100]` work well, *and for cathode material,* `G0_rand_range=[-100*5000,-50*5000], Omegas_rand_range=[-100*100,100*100]` work. 
+*Some quick notes:*
+*1. If your fitted results does not look good, TRY adjusting `G0_rand_range` and `Omegas_rand_range` in `train` function. These two parameters control the initial guess of G0 and Omegas.* *Usually for an anode material,* `G0_rand_range=[-10*5000,-5*5000], Omegas_rand_range=[-10*100,10*100]` work well, *and for cathode material,* `G0_rand_range=[-100*5000,-50*5000], Omegas_rand_range=[-100*100,100*100]` work. 
+*2. For* `number_of_Omegas`, *usually for a phase-separating material that has n phase separating regions, set number_of_Omegas to be 2n to 4n should work fine for most cases (e.g. for LFP which has one (n=1) phase separation region, number_of_Omegas=4 gives a good fit)*
+*3. If the fitted OCV function has a loss value or RMSE, try to initialize `train` function for mutiple times, as the Omegas and G0 are randomly initialized each time when you call `train` function, and some initialization will lead to bad fittings*
+*4. If after trying to adjust `G0_rand_range` and `Omegas_rand_range` and initializing `train` for multiple times you still get a large RMSE, then try to increase `number_of_Omegas`. As shown in [Figure 4 of the paper](https://pubs.acs.org/doi/10.1021/acs.jpclett.3c03129), sometimes it does need 20+ parameters to get a good fit.*
 
-If you want to know why exactly this fitting works, please refer to the paper "Open-Circuit Voltage Models Should Be Thermodynamically Consistent", https://pubs.acs.org/doi/10.1021/acs.jpclett.3c03129, or the code walk-through recording at https://drive.google.com/file/d/1PhCyvpmG28VjrClAviWHXVTnlqQScGIM/view?usp=sharing. 
+If you want to know why exactly this fitting works, please refer to the paper ["Open-Circuit Voltage Models Should Be Thermodynamically Consistent"](https://pubs.acs.org/doi/10.1021/acs.jpclett.3c03129), or the code walk-through [recording](https://drive.google.com/file/d/1PhCyvpmG28VjrClAviWHXVTnlqQScGIM/view?usp=sharing). 
 
 
 ## Folders In This Repo
