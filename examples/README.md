@@ -8,7 +8,7 @@ Fit_graphite_OCV_with_Legendre: fit ocv model for graphite with Legendre polynom
 
 Fit_graphite_OCV_with_Chebyshev: fit ocv model for graphite with Chebyshev polynomials.
 
-
+FIt_NCA_OCV_Legendre_18_Omegas: fit ocv model for NCA with Legendre polynomials and 18 Omegas. 
 
 
 ## Cite this work

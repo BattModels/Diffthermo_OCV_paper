@@ -4,7 +4,7 @@ from pybamm import exp, log, tanh, constants, Parameter, ParameterValues
 
 def fitted_OCP(sto):
     _eps = 1e-7
-    # rk params
+    # Chebyshev rk params
     G0 = -11782.242188 # G0 is the pure substance gibbs free energy 
     Omega0 = -10945.311523 
     Omega1 = -13840.604492 

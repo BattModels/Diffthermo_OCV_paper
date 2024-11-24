@@ -1,4 +1,4 @@
-import numpy as np
+ import numpy as np
 import pybamm
 from pybamm import exp, log, tanh, constants, Parameter, ParameterValues
 
