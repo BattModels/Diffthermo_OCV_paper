@@ -86,7 +86,8 @@ def train(datafile_name='graphite.csv',
           total_training_epochs = 8000,
           loss_threshold = 0.01,
           G0_rand_range=[-10*5000,-5*5000], 
-          Omegas_rand_range=[-10*100,10*100]):
+          Omegas_rand_range=[-10*100,10*100],
+          records_y_lims = [0.0,0.6]):
     """
     Fit the diffthermo OCV function
 
@@ -99,6 +100,7 @@ def train(datafile_name='graphite.csv',
     loss_threshold: threshold of loss, below which training stops automatically
     G0_rand_range: the range for randomly initialize G0
     Omegas_rand_range: the range for randomly initialize R-K parameters
+    records_y_lims: the range for records y axis lims
 
     Outputs: 
     params_list: contains fitted G0 and Omegas, which can be put into write_ocv_functions function to get your PyBaMM OCV function
@@ -131,9 +133,17 @@ def train(datafile_name='graphite.csv',
 
     # declare all params
     params_list = []
-    for _ in range(0, number_of_Omegas):
-        Omegai_start = np.random.randint(Omegas_rand_range[0], Omegas_rand_range[1])
-        params_list.append(nn.Parameter( torch.from_numpy(np.array([Omegai_start],dtype="float32")) )) 
+    if number_of_Omegas <=10:
+        for _ in range(0, number_of_Omegas):
+            Omegai_start = np.random.randint(Omegas_rand_range[0], Omegas_rand_range[1])
+            params_list.append(nn.Parameter( torch.from_numpy(np.array([Omegai_start],dtype="float32")) )) 
+    else:
+        for _ in range(0, 10):
+            Omegai_start = np.random.randint(Omegas_rand_range[0], Omegas_rand_range[1])
+            params_list.append(nn.Parameter( torch.from_numpy(np.array([Omegai_start],dtype="float32")) )) 
+        for _ in range(10, number_of_Omegas):
+            Omegai_start = 0.0
+            params_list.append(nn.Parameter( torch.from_numpy(np.array([Omegai_start],dtype="float32")) )) 
     G0_start = np.random.randint(G0_rand_range[0], G0_rand_range[1]) # G0 is the pure substance gibbs free energy 
     G0 = nn.Parameter( torch.from_numpy(np.array([G0_start],dtype="float32")) ) 
     params_list.append(G0)
@@ -251,7 +261,7 @@ def train(datafile_name='graphite.csv',
             U_true_value = mu.numpy()/(-96485) # plot the true value
             plt.plot(SOC, U_true_value, 'b-', label="True OCV")
             plt.xlim([0,1])
-            plt.ylim([0.0, 0.6])
+            plt.ylim(records_y_lims)
             plt.legend()
             plt.xlabel("SOC")
             plt.ylabel("OCV")
@@ -293,6 +303,10 @@ def write_ocv_functions(params_list, polynomial_style = "R-K"):
     """ 
     only support polynomial_style = "R-K". Does not support "Legendre" for now
     """
+    if polynomial_style == "Legendre":
+        from .energy import GibbsFE_Legendre as GibbsFE
+    elif polynomial_style == "R-K":
+        from .energy import GibbsFE_RK as GibbsFE
 
     # sample the Gibbs free energy landscape
     sample = sampling(GibbsFE, params_list, T=300, sampling_id=1)
@@ -316,11 +330,11 @@ def write_ocv_functions(params_list, polynomial_style = "R-K"):
     if len(phase_boundary_fixed_point) > 0:
         print("Found %d phase coexistence region(s):" %(len(phase_boundary_fixed_point)))
         for i in range(0, len(phase_boundary_fixed_point)):
-            print("From x=%.16f to x=%.16f" %(phase_boundary_fixed_point[i][0], phase_boundary_fixed_point[i][1]))
             x_alpha = phase_boundary_fixed_point[i][0]
             x_beta = phase_boundary_fixed_point[i][1]
             ct_now = (GibbsFE(x_alpha, params_list, T=300) - GibbsFE(x_beta, params_list, T=300))/(x_alpha - x_beta) 
             cts.append(ct_now)
+            print("From x=%.16f to x=%.16f, mu_coex=%.16f" %(phase_boundary_fixed_point[i][0], phase_boundary_fixed_point[i][1], ct_now))
     else:
         print("No phase separation region detected.")
 
@@ -358,11 +372,16 @@ def write_ocv_functions(params_list, polynomial_style = "R-K"):
             fout.write(text)
             fout.write("    \n")
             fout.write("    mu_outside = G0 + 8.314*300.0*log((sto+_eps)/(1-sto+_eps))\n")
-            fout.write("    for i in range(0, len(Omegas)):\n")
+            
             if polynomial_style == "R-K":
+                fout.write("    for i in range(0, len(Omegas)):\n")
                 fout.write("        mu_outside = mu_outside + is_outside_miscibility_gaps * Omegas[i]*((1-2*sto)**(i+1) - 2*i*sto*(1-sto)*(1-2*sto)**(i-1))\n")
-            elif polynomial_style == "Legendre":
-                fout.write("        mu_outside = mu_outside + is_outside_miscibility_gaps * Omegas[i]*((1-2*sto)**(i+1) - 2*i*sto*(1-sto)*(1-2*sto)**(i-1))\n")
+            elif polynomial_style == "Legendre":              
+                fout.write("    t = 1 - 2 * sto  # Transform x to (1 - 2x) for legendre expansion\n")
+                fout.write("    Pn_values = legendre_poly_recurrence(t,len(Omegas)-1)\n")
+                fout.write("    Pn_derivatives_values = legendre_derivative_poly_recurrence(t, len(Omegas)-1)  # Compute Legendre polynomials up to degree len(coeffs) - 1\n")
+                fout.write("    for i in range(0, len(Omegas)):\n")
+                fout.write("        mu_outside = mu_outside -2*sto*(1-sto)*(Omegas[i]*Pn_derivatives_values[i]) + (1-2*sto)*(Omegas[i]*Pn_values[i])\n")
             else:
                 print("polynomial_style not recognized in write_ocv")
                 exit()
@@ -377,59 +396,66 @@ def write_ocv_functions(params_list, polynomial_style = "R-K"):
             fout.write(text)
             fout.write("    return -mu_e/96485.0\n\n\n\n")
             
-            if polynomial_style == "Legendre":
-                print("Need to print legendre_poly_recurrence!!!")
-                
+    if polynomial_style == "Legendre":
+        abs_path = os.path.abspath(__file__)[:-8]+"__legendre_derivatives.py"
+        with open(abs_path,'r') as fin:
+            lines = fin.readlines()
+        with open("fitted_ocv_functions.py", "a") as fout:
+            for line in lines:
+                fout.write(line)
             
     # print output function in matlab
-    with open("fitted_ocv_functions.m", "w") as fout:
-        fout.write("function result = ocv(sto):\n")
-        fout.write("    eps = 1e-7;\n")
-        fout.write("    %% rk params\n")
-        fout.write("    G0 = %.6f; %%G0 is the pure substance gibbs free energy \n" %(params_list[-1].item()))
-        for i in range(0, len(params_list)-1):
-            fout.write("    Omega%d = %.6f; \n" %(i, params_list[i].item()))
-        text = "    Omegas =["
-        for i in range(0, len(params_list)-1):
-            text=text+"Omega"+str(i)
-            if i!= len(params_list)-2:
-                text=text+", "
-            else:
-                text=text+"];\n"
-        fout.write(text)
-        # write phase boundaries
-        if len(phase_boundary_fixed_point)>0:
-            for i in range(0, len(phase_boundary_fixed_point)):
-                fout.write("    %% phase boundary %d\n" %(i))
-                fout.write("    x_alpha_%d = %.16f ; \n" %(i, phase_boundary_fixed_point[i][0]))
-                fout.write("    x_beta_%d = %.16f ; \n" %(i, phase_boundary_fixed_point[i][1]))
-                fout.write("    mu_coex_%d = %.16f ; \n" %(i, cts[i]))
-                fout.write("    is_outside_miscibility_gap_%d = (sto<x_alpha_%d) + (sto>x_beta_%d) ; \n" %(i,i,i))
-            fout.write("    %% whether is outside all gap\n")
-            text = "    is_outside_miscibility_gaps = "
-            for i in range(0, len(phase_boundary_fixed_point)):
-                text = text + "is_outside_miscibility_gap_%d " %(i)
-                if i!=len(phase_boundary_fixed_point)-1:
-                    text = text + "* "
+    if polynomial_style == "R-K":
+        with open("fitted_ocv_functions.m", "w") as fout:
+            fout.write("function result = ocv(sto):\n")
+            fout.write("    eps = 1e-7;\n")
+            fout.write("    %% rk params\n")
+            fout.write("    G0 = %.6f; %%G0 is the pure substance gibbs free energy \n" %(params_list[-1].item()))
+            for i in range(0, len(params_list)-1):
+                fout.write("    Omega%d = %.6f; \n" %(i, params_list[i].item()))
+            text = "    Omegas =["
+            for i in range(0, len(params_list)-1):
+                text=text+"Omega"+str(i)
+                if i!= len(params_list)-2:
+                    text=text+", "
+                else:
+                    text=text+"];\n"
             fout.write(text)
-            fout.write(";    \n")
-            fout.write("    mu_outside = G0 + 8.314*300.0*log((sto+eps)/(1-sto+eps)) ; \n") 
-            
-            fout.write("    for i=0:length(Omegas)-1\n")
-            fout.write("        mu_outside = mu_outside + is_outside_miscibility_gaps * Omegas[i+1]*((1-2*sto)^(i+1) - 2*i*sto*(1-sto)*(1-2*sto)^(i-1));\n")
-            fout.write("end\n")
-            
-            text0 = "    mu_e = is_outside_miscibility_gaps * mu_outside + (1-is_outside_miscibility_gaps) *   "
-            text1 = ""
-            for i in range(0, len(cts)):
-                text1 = text1 + "(1-is_outside_miscibility_gap_%d)*mu_coex_%d " %(i, i)
-                if i != len(cts)-1:
-                    text1 = text1 + " + "
-            text = text0 + "(" + text1 + ") ;\n"
-            fout.write(text)
-            fout.write("    result = -mu_e/96485.0 ;")
-            fout.write("    return;")
-            fout.write("end  \n\n\n")
+            # write phase boundaries
+            if len(phase_boundary_fixed_point)>0:
+                for i in range(0, len(phase_boundary_fixed_point)):
+                    fout.write("    %% phase boundary %d\n" %(i))
+                    fout.write("    x_alpha_%d = %.16f ; \n" %(i, phase_boundary_fixed_point[i][0]))
+                    fout.write("    x_beta_%d = %.16f ; \n" %(i, phase_boundary_fixed_point[i][1]))
+                    fout.write("    mu_coex_%d = %.16f ; \n" %(i, cts[i]))
+                    fout.write("    is_outside_miscibility_gap_%d = (sto<x_alpha_%d) + (sto>x_beta_%d) ; \n" %(i,i,i))
+                fout.write("    %% whether is outside all gap\n")
+                text = "    is_outside_miscibility_gaps = "
+                for i in range(0, len(phase_boundary_fixed_point)):
+                    text = text + "is_outside_miscibility_gap_%d " %(i)
+                    if i!=len(phase_boundary_fixed_point)-1:
+                        text = text + "* "
+                fout.write(text)
+                fout.write(";    \n")
+                fout.write("    mu_outside = G0 + 8.314*300.0*log((sto+eps)/(1-sto+eps)) ; \n") 
+                
+                fout.write("    for i=0:length(Omegas)-1\n")
+                fout.write("        mu_outside = mu_outside + is_outside_miscibility_gaps * Omegas[i+1]*((1-2*sto)^(i+1) - 2*i*sto*(1-sto)*(1-2*sto)^(i-1));\n")
+                fout.write("end\n")
+                
+                text0 = "    mu_e = is_outside_miscibility_gaps * mu_outside + (1-is_outside_miscibility_gaps) *   "
+                text1 = ""
+                for i in range(0, len(cts)):
+                    text1 = text1 + "(1-is_outside_miscibility_gap_%d)*mu_coex_%d " %(i, i)
+                    if i != len(cts)-1:
+                        text1 = text1 + " + "
+                text = text0 + "(" + text1 + ") ;\n"
+                fout.write(text)
+                fout.write("    result = -mu_e/96485.0 ;")
+                fout.write("    return;")
+                fout.write("end  \n\n\n")
+    else:
+        print("Writing matlab ocv function only support R-K")
     # write complete
     print("\n\n\n\n\n Fitting Complete.\n")
     print("Fitted OCV function written in PyBaMM function (copy and paste readay!):\n")
@@ -439,4 +465,4 @@ def write_ocv_functions(params_list, polynomial_style = "R-K"):
     for line in lines:
         print(line, end='')
     print("\n\n###################################\n")
-    print("Or check fitted_ocv_functions.py and fitted_ocv_functions.m for fitted thermodynamically consistent OCV model in PyBaMM & Matlab formats. ")
+    print("Or check fitted_ocv_functions.py and fitted_ocv_functions.m (if polynomial style = R-K) for fitted thermodynamically consistent OCV model in PyBaMM & Matlab formats. ")

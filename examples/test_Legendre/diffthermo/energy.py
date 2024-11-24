@@ -60,7 +60,7 @@ def GibbsFE_Legendre(x, params_list, T = 300):
     x = torch.clamp(x, min=_eps, max=1.0-_eps)
     G = x*G0 + (1-x)*0.0 + 8.314*T*(x*torch.log(x)+(1-x)*torch.log(1-x)) 
     t = 1 - 2 * x  # Transform x to (1 - 2x) for legendre expansion
-    Pn_values = legendre_poly_recurrence(t, len(params_list))  # Compute Legendre polynomials up to degree len(coeffs) - 1
+    Pn_values = legendre_poly_recurrence(t, len(params_list)-2)  # Compute Legendre polynomials up to degree len(coeffs) - 1 # don't need to get Pn(G0)
     for i in range(0, len(params_list)-1):
         G = G + x*(1-x)*(params_list[i]*Pn_values[i])
     return G
@@ -70,13 +70,13 @@ def GibbsFE_Legendre(x, params_list, T = 300):
 def legendre_poly_recurrence(x, n):
     """
     Compute the Legendre polynomials up to degree n 
-    using the Bonnet's recursion formula,
+    using the Bonnet's recursion formula (i+1)P_(i+1)(x) = (2i+1)xP_i(x) - iP_(i-1)(x)
     and return all n functions in a list
     """
     P = [torch.ones_like(x), x]  # P_0(x) = 1, P_1(x) = x
     for i in range(1, n):
-        P_next = ((2 * i + 1) * x * P[i] - i * P[i - 1]) / (i + 1)
-        P.append(P_next)
+        P_i_plus_one = ((2 * i + 1) * x * P[i] - i * P[i - 1]) / (i + 1)
+        P.append(P_i_plus_one)
     return P
 
 def sampling(GibbsFunction, params_list, T, sampling_id, ngrid=99, requires_grad = False):
