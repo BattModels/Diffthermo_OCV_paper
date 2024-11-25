@@ -50,65 +50,6 @@ def GibbsFE_RK(x, params_list, T = 300):
         G = G + x*(1-x)*(params_list[i]*(1-2*x)**i)
     return G
 
-def GibbsFE_Legendre(x, params_list, T = 300):
-    """
-    Expression for Gibbs Free Energy of charging / discharging process
-    params_list contains the RK params and G0, in the sequence of [Omega0, Omega1, ..., G0]
-    T is temperature, default value is 300K
-    """
-    G0 = params_list[-1]
-    x = torch.clamp(x, min=_eps, max=1.0-_eps)
-    G = x*G0 + (1-x)*0.0 + 8.314*T*(x*torch.log(x)+(1-x)*torch.log(1-x)) 
-    t = 1 - 2 * x  # Transform x to (1 - 2x) for legendre expansion
-    Pn_values = legendre_poly_recurrence(t, len(params_list)-2)  # Compute Legendre polynomials up to degree len(coeffs) - 1 # don't need to get Pn(G0)
-    for i in range(0, len(params_list)-1):
-        G = G + x*(1-x)*(params_list[i]*Pn_values[i])
-    return G
-
-
-def GibbsFE_Chebyshev(x, params_list, T = 300):
-    """
-    Expression for Gibbs Free Energy of charging / discharging process
-    params_list contains the RK params and G0, in the sequence of [Omega0, Omega1, ..., G0]
-    T is temperature, default value is 300K
-    """
-    G0 = params_list[-1]
-    x = torch.clamp(x, min=_eps, max=1.0-_eps)
-    G = x*G0 + (1-x)*0.0 + 8.314*T*(x*torch.log(x)+(1-x)*torch.log(1-x)) 
-    t = 1 - 2 * x  # Transform x to (1 - 2x) for legendre expansion
-    Tn_values = chebyshev_poly_recurrence(t, len(params_list)-2)  # Compute chebyshev polynomials up to degree len(coeffs) - 1
-    for i in range(0, len(params_list)-1):
-        G = G + x*(1-x)*(params_list[i]*Tn_values[i])
-    return G
-
-
-# Function to compute Legendre polynomials using recurrence relation
-def legendre_poly_recurrence(x, n):
-    """
-    Compute the Legendre polynomials up to degree n 
-    using the Bonnet's recursion formula (i+1)P_(i+1)(x) = (2i+1)xP_i(x) - iP_(i-1)(x)
-    and return all n functions in a list
-    """
-    P = [torch.ones_like(x), x]  # P_0(x) = 1, P_1(x) = x
-    for i in range(1, n):
-        P_i_plus_one = ((2 * i + 1) * x * P[i] - i * P[i - 1]) / (i + 1)
-        P.append(P_i_plus_one)
-    return P
-
-# Function to compute Chebyshev polynomials (first kind) using recurrence relation
-def chebyshev_poly_recurrence(x, n):
-    """
-    Compute the Chebyshev polynomials (first kind) up to degree n 
-    using the recursion formula T_(n+1)(x) = 2xT_n(x) - T_(n-1)(x),
-    and return all n functions in a list
-    """
-    T = [torch.ones_like(x), x]  # T_0(x) = 1, T_1(x) = x
-    for i in range(1, n):
-        T_i_plus_1 = 2*x*T[i] - T[i-1]
-        T.append(T_i_plus_1)
-    return T
-
-
 
 
 def sampling(GibbsFunction, params_list, T, sampling_id, ngrid=99, requires_grad = False):

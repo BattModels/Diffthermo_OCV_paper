@@ -2,13 +2,8 @@
 
 For each of these folders, look at the `main.py` script: that is the script used to fit all the models. Output OCV models can be found in `fitted_ocv_functions.py`.
 
-Fit_graphite_OCV (deprecated): fit ocv model for graphite with R-K polynomials.
+Fit_graphite_OCV: fit ocv model for graphite with R-K polynomials.
 
-Fit_graphite_OCV_with_Legendre: fit ocv model for graphite with Legendre polynomials.
-
-Fit_graphite_OCV_with_Chebyshev: fit ocv model for graphite with Chebyshev polynomials.
-
-FIt_NCA_OCV_Legendre_18_Omegas: fit ocv model for NCA with Legendre polynomials and 18 Omegas. 
 
 
 ## Cite this work

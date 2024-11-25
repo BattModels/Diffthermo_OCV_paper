@@ -30,23 +30,19 @@ from diffthermo.utils import train, write_ocv_functions
 # fit the OCV function
 params_list = train(datafile_name='graphite.csv', 
                         number_of_Omegas=6, 
-                        polynomial_style = "Legendre",
                         learning_rate = 1000.0, 
                         total_training_epochs = 8000,
                         loss_threshold = 0.01,
                         G0_rand_range=[-10*5000,-5*5000], 
-                        Omegas_rand_range=[-10*100,10*100],
-                        records_y_lims = [0.0,0.6])
+                        Omegas_rand_range=[-10*100,10*100])
 # write the fitted OCV function in PyBaMM OCV function format
-write_ocv_functions(params_list, polynomial_style = "Legendre")
+write_ocv_functions(params_list)
 ```
 After the fitting, you can find your fitted PyBaMM OCV function in the file `fitted_ocv_functions.py`, and the MATLAB OCV function in the file `fitted_ocv_functions.m`, or directly find them in the terminal where you executed the fitting code. Copy and paste them into your own projects and that's it! Incredibly easy, isn't it?
 
 See [`example_graphite_OCV.ipynb`](examples/example_graphite_OCV.ipynb) under folder `examples` as a quick example, and what do all the parameters for `train` function means. 
 
 *Some quick notes:*
-
-*1. polynomial_style = "Legendre" or "Chebyshev" is STRONGLY RECOMMENDED! R-K is not orthogonal basis, therefore likely encounter ill-defined situations.*
 
 *2. If your fitted results does not look good, TRY adjusting `G0_rand_range` and `Omegas_rand_range` in `train` function. These two parameters control the initial guess of G0 and Omegas.* *Usually for an anode material,* `G0_rand_range=[-10*5000,-5*5000], Omegas_rand_range=[-10*100,10*100]` work well, *and for cathode material,* `G0_rand_range=[-100*5000,-50*5000], Omegas_rand_range=[-100*100,100*100]` work. 
 

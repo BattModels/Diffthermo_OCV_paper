@@ -1,10 +1,6 @@
 ## Fitted OCV functions
 
-Chebyshev_version: OCV models of 12 materials fitted with Chebyshev polynomials expanded excess Gibbs Free Energy.
-
-Legendre_version: OCV models of 12 materials fitted with Legendre polynomials expanded excess Gibbs Free Energy.
-
-__RK_fitted_deprecated: OCV models of 12 materials fitted with Redlich-Kister polynomials expanded excess Gibbs Free Energy, as reported in Yao & Viswanathan 2024, doi:10.1021/acs.jpclett.3c03129. Deprecated now, we strongly suggest that Chebyshev or Legendre version should be used. 
+OCV models of 12 materials fitted with Redlich-Kister polynomials expanded excess Gibbs Free Energy, as reported in Yao & Viswanathan 2024, doi:10.1021/acs.jpclett.3c03129.
 
 
 ## Cite this work

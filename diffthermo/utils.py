@@ -81,7 +81,7 @@ def collocation_loss_all_pts(mu, x, phase_boundarys_fixed_point, GibbsFunction, 
 # train function
 def train(datafile_name='graphite.csv', 
           number_of_Omegas=6, 
-          polynomial_style = "Legendre",
+          polynomial_style = "RK",
           learning_rate = 1000.0, 
           total_training_epochs = 8000,
           loss_threshold = 0.01,
@@ -94,7 +94,7 @@ def train(datafile_name='graphite.csv',
     Inputs:
     datafile_name: the csv file which contains OCV and SoC data, first column must be Li filling fraction (Be careful that Li filling fraction might be SoC or 1-SoC!), second column must be OCV. Must not be header
     number_of_Omegas: number of R-K parameters. Note that the order of R-K expansion = number_of_Omegas - 1
-    polynomial_style: style of polynomials to expand excess thermo, can be "Legendre", "R-K", "Chebyshev".
+    polynomial_style: style of polynomials to expand excess thermo
     learning_rate: learning rate for updating parameters
     total_training_epochs: total epochs for fitting
     loss_threshold: threshold of loss, below which training stops automatically
@@ -106,13 +106,9 @@ def train(datafile_name='graphite.csv',
     params_list: contains fitted G0 and Omegas, which can be put into write_ocv_functions function to get your PyBaMM OCV function
     """
     
-    if polynomial_style == "Legendre":
-        from .energy import GibbsFE_Legendre as GibbsFE
-    elif polynomial_style == "R-K":
+    if polynomial_style == "R-K":
         from .energy import GibbsFE_RK as GibbsFE
-    elif polynomial_style == "Chebyshev":
-        from .energy import GibbsFE_Chebyshev as GibbsFE
-    
+
     working_dir = os.getcwd()
     os.chdir(working_dir)
     try:
@@ -302,12 +298,8 @@ def train(datafile_name='graphite.csv',
 
 
 def write_ocv_functions(params_list, polynomial_style = "R-K"):
-    if polynomial_style == "Legendre":
-        from .energy import GibbsFE_Legendre as GibbsFE
-    elif polynomial_style == "R-K":
+    if polynomial_style == "R-K":
         from .energy import GibbsFE_RK as GibbsFE
-    elif polynomial_style == "Chebyshev":
-        from .energy import GibbsFE_Chebyshev as GibbsFE
 
     # sample the Gibbs free energy landscape
     sample = sampling(GibbsFE, params_list, T=300, sampling_id=1)
@@ -377,18 +369,6 @@ def write_ocv_functions(params_list, polynomial_style = "R-K"):
             if polynomial_style == "R-K":
                 fout.write("    for i in range(0, len(Omegas)):\n")
                 fout.write("        mu_outside = mu_outside + is_outside_miscibility_gaps * Omegas[i]*((1-2*sto)**(i+1) - 2*i*sto*(1-sto)*(1-2*sto)**(i-1))\n")
-            elif polynomial_style == "Legendre":              
-                fout.write("    t = 1 - 2 * sto  # Transform x to (1 - 2x) for legendre expansion\n")
-                fout.write("    Pn_values = legendre_poly_recurrence(t,len(Omegas)-1)\n")
-                fout.write("    Pn_derivatives_values = legendre_derivative_poly_recurrence(t, len(Omegas)-1)  # Compute Legendre polynomials up to degree len(coeffs) - 1\n")
-                fout.write("    for i in range(0, len(Omegas)):\n")
-                fout.write("        mu_outside = mu_outside -2*sto*(1-sto)*(Omegas[i]*Pn_derivatives_values[i]) + (1-2*sto)*(Omegas[i]*Pn_values[i])\n")
-            elif polynomial_style == "Chebyshev":
-                fout.write("    t = 1 - 2 * sto  # Transform x to (1 - 2x) for legendre expansion\n")
-                fout.write("    Tn_values = chebyshev_poly_recurrence(t,len(Omegas)-1)\n")
-                fout.write("    Tn_derivatives_values = chebyshev_derivative_poly_recurrence(t, len(Omegas)-1)  # Compute Legendre polynomials up to degree len(coeffs) - 1\n")
-                fout.write("    for i in range(0, len(Omegas)):\n")
-                fout.write("        mu_outside = mu_outside -2*sto*(1-sto)*(Omegas[i]*Tn_derivatives_values[i]) + (1-2*sto)*(Omegas[i]*Tn_values[i])\n")
             else:
                 print("polynomial_style not recognized in write_ocv")
                 exit()
@@ -408,35 +388,9 @@ def write_ocv_functions(params_list, polynomial_style = "R-K"):
             if polynomial_style == "R-K":
                 fout.write("    for i in range(0, len(Omegas)):\n")
                 fout.write("        mu = mu + Omegas[i]*((1-2*sto)**(i+1) - 2*i*sto*(1-sto)*(1-2*sto)**(i-1))\n")
-            elif polynomial_style == "Legendre":              
-                fout.write("    t = 1 - 2 * sto  # Transform x to (1 - 2x) for legendre expansion\n")
-                fout.write("    Pn_values = legendre_poly_recurrence(t,len(Omegas)-1)\n")
-                fout.write("    Pn_derivatives_values = legendre_derivative_poly_recurrence(t, len(Omegas)-1)  # Compute Legendre polynomials up to degree len(coeffs) - 1\n")
-                fout.write("    for i in range(0, len(Omegas)):\n")
-                fout.write("        mu = mu -2*sto*(1-sto)*(Omegas[i]*Pn_derivatives_values[i]) + (1-2*sto)*(Omegas[i]*Pn_values[i])\n")
-            elif polynomial_style == "Chebyshev":
-                fout.write("    t = 1 - 2 * sto  # Transform x to (1 - 2x) for legendre expansion\n")
-                fout.write("    Tn_values = chebyshev_poly_recurrence(t,len(Omegas)-1)\n")
-                fout.write("    Tn_derivatives_values = chebyshev_derivative_poly_recurrence(t, len(Omegas)-1)  # Compute Legendre polynomials up to degree len(coeffs) - 1\n")
-                fout.write("    for i in range(0, len(Omegas)):\n")
-                fout.write("        mu = mu -2*sto*(1-sto)*(Omegas[i]*Tn_derivatives_values[i]) + (1-2*sto)*(Omegas[i]*Tn_values[i])\n")
             fout.write("    return -mu/96485.0\n\n\n\n")
             
-            
-    if polynomial_style == "Legendre":
-        abs_path = os.path.abspath(__file__)[:-8]+"__legendre_derivatives.py"
-        with open(abs_path,'r') as fin:
-            lines = fin.readlines()
-        with open("fitted_ocv_functions.py", "a") as fout:
-            for line in lines:
-                fout.write(line)
-    elif polynomial_style == "Chebyshev":
-        abs_path = os.path.abspath(__file__)[:-8]+"__chebyshev_derivatives.py"
-        with open(abs_path,'r') as fin:
-            lines = fin.readlines()
-        with open("fitted_ocv_functions.py", "a") as fout:
-            for line in lines:
-                fout.write(line)
+        
             
     # print output function in matlab
     if polynomial_style == "R-K":
