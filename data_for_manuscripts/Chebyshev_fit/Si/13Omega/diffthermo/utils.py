@@ -402,6 +402,26 @@ def write_ocv_functions(params_list, polynomial_style = "R-K"):
             text = text0 + "(" + text1 + ")\n"
             fout.write(text)
             fout.write("    return -mu_e/96485.0\n\n\n\n")
+        else:
+            # no phase boundaries required, just mu and return -mu/F
+            fout.write("    mu = G0 + 8.314*300.0*log((sto+_eps)/(1-sto+_eps))\n")
+            if polynomial_style == "R-K":
+                fout.write("    for i in range(0, len(Omegas)):\n")
+                fout.write("        mu = mu + Omegas[i]*((1-2*sto)**(i+1) - 2*i*sto*(1-sto)*(1-2*sto)**(i-1))\n")
+            elif polynomial_style == "Legendre":              
+                fout.write("    t = 1 - 2 * sto  # Transform x to (1 - 2x) for legendre expansion\n")
+                fout.write("    Pn_values = legendre_poly_recurrence(t,len(Omegas)-1)\n")
+                fout.write("    Pn_derivatives_values = legendre_derivative_poly_recurrence(t, len(Omegas)-1)  # Compute Legendre polynomials up to degree len(coeffs) - 1\n")
+                fout.write("    for i in range(0, len(Omegas)):\n")
+                fout.write("        mu = mu -2*sto*(1-sto)*(Omegas[i]*Pn_derivatives_values[i]) + (1-2*sto)*(Omegas[i]*Pn_values[i])\n")
+            elif polynomial_style == "Chebyshev":
+                fout.write("    t = 1 - 2 * sto  # Transform x to (1 - 2x) for legendre expansion\n")
+                fout.write("    Tn_values = chebyshev_poly_recurrence(t,len(Omegas)-1)\n")
+                fout.write("    Tn_derivatives_values = chebyshev_derivative_poly_recurrence(t, len(Omegas)-1)  # Compute Legendre polynomials up to degree len(coeffs) - 1\n")
+                fout.write("    for i in range(0, len(Omegas)):\n")
+                fout.write("        mu = mu -2*sto*(1-sto)*(Omegas[i]*Tn_derivatives_values[i]) + (1-2*sto)*(Omegas[i]*Tn_values[i])\n")
+            fout.write("    return -mu/96485.0\n\n\n\n")
+            
             
     if polynomial_style == "Legendre":
         abs_path = os.path.abspath(__file__)[:-8]+"__legendre_derivatives.py"
