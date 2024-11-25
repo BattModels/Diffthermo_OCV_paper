@@ -46,7 +46,7 @@ See [`example_graphite_OCV.ipynb`](examples/example_graphite_OCV.ipynb) under fo
 
 *Some quick notes:*
 
-*1. polynomial_style = "Legendre" is STRONGLY RECOMMENDED! R-K is not orthogonal basis, therefore likely encounter ill-defined situations.*
+*1. polynomial_style = "Legendre" or "Chebyshev" is STRONGLY RECOMMENDED! R-K is not orthogonal basis, therefore likely encounter ill-defined situations.*
 
 *2. If your fitted results does not look good, TRY adjusting `G0_rand_range` and `Omegas_rand_range` in `train` function. These two parameters control the initial guess of G0 and Omegas.* *Usually for an anode material,* `G0_rand_range=[-10*5000,-5*5000], Omegas_rand_range=[-10*100,10*100]` work well, *and for cathode material,* `G0_rand_range=[-100*5000,-50*5000], Omegas_rand_range=[-100*100,100*100]` work. 
 
@@ -62,11 +62,11 @@ If you want to know why exactly this fitting works, please refer to the paper ["
 ## Folders In This Repo
 diffthermo: the source code. 
 
-examples: example on how to fit a thermodynamically consistent OCV functions with a graphite OCV dataset. The jupyter notebook file `example_graphite_OCV.ipynb` explains how to use the package using the graphite OCV as an example. 
+examples: examples on how to fit a thermodynamically consistent OCV functions. 
 
-data_for_manuscripts: contains all source code & run results for the paper "Open-Circuit Voltage Models Should Be Thermodynamically Consistent".
+data_for_manuscripts: contains all source code & run results for the paper "Open-Circuit Voltage Models Should Be Thermodynamically Consistent", as well as the Legendre/Chebyshev version of OCV models.
 
-pybamm_OCV_functions: contains all the 12 fitted thermodynamically consistent OCV functions, implemented in PyBamm. You can get your OCV model in **Matlab** by running the fitting process and check the output file `fitted_ocv_functions.m`.
+pybamm_OCV_functions: contains all the fitted thermodynamically consistent OCV functions, implemented in PyBamm. You can get your OCV model in **Matlab** by running the fitting process and check the output file `fitted_ocv_functions.m`.
 
 
 ## Cite this work
