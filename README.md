@@ -40,7 +40,7 @@ write_ocv_functions(params_list)
 ```
 After the fitting, you can find your fitted PyBaMM OCV function in the file `fitted_ocv_functions.py`, and the MATLAB OCV function in the file `fitted_ocv_functions.m`, or directly find them in the terminal where you executed the fitting code. Copy and paste them into your own projects and that's it! Incredibly easy, isn't it?
 
-See [`example_graphite_OCV.ipynb`](examples/Fit_graphite_OCV/example_graphite_OCV.ipynb) under folder `examples` as a quick example, and what do all the parameters for `train` function means. 
+See [`example_graphite_OCV.ipynb`](examples/Fit_graphite_OCV/example_graphite_OCV.ipynb)  and [`example_LFP_OCV.ipynb`](examples/Fit_LFP_OCV/example_LFP_OCV.ipynb) under folder `examples` as two quick examples on how to fit OCV for graphite and LFP, and what do all the parameters for `train` function means. 
 
 *Some quick notes:*
 
